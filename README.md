@@ -3,7 +3,7 @@
 Course material of the **InterJIA workshop** (Madrid, November 2026), by the
 [GeoOcean Group](https://geoocean.unican.es) (Universidad de Cantabria).
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/GeoOcean/InterJIA)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/GeoOcean/BlueMath_Course_InterJIA)
 
 The Santoña estuary (Cantabria, Spain) can be flooded by the **sea**, the
 **Asón river** and the **rain**, often at the same time. Simulating every
@@ -17,7 +17,7 @@ model**:
 4. drive the surrogate with a **climate emulator** (weather types + copulas)
    to get 300 years of floods and the 10-, 50- and 100-year flood maps.
 
-Slides: <https://geoocean.github.io/InterJIA/>
+Slides: <https://geoocean.github.io/BlueMath_Course_InterJIA/>
 
 ## Getting started
 
@@ -87,7 +87,7 @@ slides/             workshop slides (GitHub Pages)
 ## Slides
 
 The slides are plain HTML files in [`slides/`](slides/), published at
-<https://geoocean.github.io/InterJIA/>. The interactive demos run in the
+<https://geoocean.github.io/BlueMath_Course_InterJIA/>. The interactive demos run in the
 browser, so nothing needs installing. To view them locally, serve the folder
 (some browsers block `file://` pages from loading data files):
 
