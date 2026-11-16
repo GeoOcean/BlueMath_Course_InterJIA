@@ -1,0 +1,29 @@
+{
+    "name": "InterJIA · HySfincs",
+    // Prebuilt from .devcontainer/Dockerfile (see the header of that file).
+    // To build it locally instead, replace "image" with:
+    //   "build": { "dockerfile": "Dockerfile", "context": ".." }
+    "image": "geoocean/interjia:latest",
+    "hostRequirements": {
+        "cpus": 4
+    },
+    "customizations": {
+        "codespaces": {
+            "openFiles": [
+                "README.md",
+                "notebooks/01_SFINCS_metamodel.ipynb"
+            ]
+        },
+        "vscode": {
+            "settings": {
+                "python.defaultInterpreterPath": "/opt/conda/bin/python",
+                "jupyter.notebookFileRoot": "${fileDirname}",
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-toolsai.jupyter"
+            ]
+        }
+    }
+}

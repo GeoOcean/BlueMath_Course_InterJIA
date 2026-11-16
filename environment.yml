@@ -1,0 +1,35 @@
+# Python environment of the course (also used to build the devcontainer image).
+# Local install:  mamba env create -f environment.yml && conda activate interjia
+name: interjia
+channels:
+  - conda-forge
+dependencies:
+  # Core versions pinned to the set the pretrained models were built with
+  - python=3.12
+  - numpy=2.3
+  - pandas=2.3
+  - pytz  # used by bluemath-tk, no longer pulled in by pandas
+  - xarray=2025.12
+  - dask
+  - netcdf4
+  - scipy=1.17
+  - scikit-learn=1.8
+  - statsmodels
+  - matplotlib
+  - cartopy
+  - geopandas
+  - shapely
+  - rasterio=1.4  # with libgdal 3.10: the DEM reprojection of notebook 01
+  - libgdal-core=3.10  # changes with GDAL 3.11+ (pretrained/ was built with 3.10)
+  - rioxarray
+  - openpyxl
+  # Jupyter
+  - jupyterlab
+  - ipykernel
+  - ipywidgets
+  - pip
+  - pip:
+      - bluemath-tk==1.3
+      # SFINCS model builder (the wrapper uses the hydromt-sfincs 1.x API)
+      - hydromt==0.10.1
+      - hydromt-sfincs==1.2.2
