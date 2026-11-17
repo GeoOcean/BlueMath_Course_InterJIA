@@ -1,4 +1,4 @@
-# HySfincs: Hybrid Compound-Flood Modelling of the Santoña Estuary
+# HyDeCoFfEE: Hybrid Compound-Flood Modelling of the Santoña Estuary
 
 Course material of the **InterJIA workshop** (Madrid, November 2026), by the
 [GeoOcean Group](https://geoocean.unican.es) (Universidad de Cantabria).
@@ -10,12 +10,14 @@ Course material of the **InterJIA workshop** (Madrid, November 2026), by the
 The Santoña estuary (Cantabria, Spain) can be flooded by the **sea**, the
 **Asón river** and the **rain**, often at the same time. Simulating every
 possible day with a flood model is too expensive, so we build a **hybrid
-model**:
+model**: HyDeCoFfEE, a simpler version of
+[HyCoFfEE](https://doi.org/10.1016/j.ecss.2026.110271) that uses SFINCS
+instead of SCHISM.
 
 1. pick 100 representative days with **LHS + MDA**,
 2. simulate them with **[SFINCS](https://github.com/Deltares/SFINCS)**,
 3. learn the flood maps with **PCA + RBF**, a surrogate that answers in milliseconds,
-4. drive it with a **climate emulator** to get 300 years of floods and the
+4. drive it with a **climate emulator** to get 3 × 100 years of floods and the
    10-, 50- and 100-year flood maps.
 
 ## Getting started

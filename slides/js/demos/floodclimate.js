@@ -72,7 +72,7 @@ async function returnPeriod(el) {
       shapes: [{ type: 'line', x0: Ty, x1: Ty, y0: ymin, y1: lev, line: { color: C.ink, dash: 'dot', width: 1.5 } }, { type: 'line', xref: 'x', x0: 1, x1: Ty, y0: lev, y1: lev, line: { color: C.ink, dash: 'dot', width: 1.5 } }],
       margin: { t: 6 },
     });
-    out.innerHTML = `<div class="stat-row"><div class="s"><span class="v">${lev.toFixed(2)} m</span><span class="k">${Math.round(Ty)}-year level (300 yr)</span></div></div><div class="readout">across the 3 simulations: ${Math.min(...levels).toFixed(2)} – ${Math.max(...levels).toFixed(2)} m</div>`;
+    out.innerHTML = `<div class="stat-row"><div class="s"><span class="v">${lev.toFixed(2)} m</span><span class="k">${Math.round(Ty)}-year level (3 × 100 yr pooled)</span></div></div><div class="readout">across the 3 simulations: ${Math.min(...levels).toFixed(2)} – ${Math.max(...levels).toFixed(2)} m</div>`;
   }
   render(); onResize(div, render);
   return {};

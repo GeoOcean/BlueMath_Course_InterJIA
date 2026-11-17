@@ -1,25 +1,14 @@
 {
-    "name": "InterJIA · HySfincs",
-    // Prebuilt from .devcontainer/Dockerfile (see the header of that file).
+    "name": "InterJIA · HyDeCoFfEE",
     // To build it locally instead, replace "image" with:
     //   "build": { "dockerfile": "Dockerfile", "context": ".." }
-    // "image": "geoocean/interjia:latest",
-    "build": {
-        "dockerfile": "Dockerfile",
-        "context": ".."
-    },
+    "image": "geoocean/interjia:latest",
     // Clone BlueMath_tk into /workspaces and install it in editable mode
     "postCreateCommand": "bash .devcontainer/install_develop.sh",
     "hostRequirements": {
         "cpus": 4
     },
     "customizations": {
-        "codespaces": {
-            "openFiles": [
-                "README.md",
-                "notebooks/01_SFINCS_wrapper.ipynb"
-            ]
-        },
         "vscode": {
             "settings": {
                 "python.defaultInterpreterPath": "/opt/conda/bin/python",

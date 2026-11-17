@@ -7,8 +7,9 @@ import sfincs from './demos/sfincs.js';
 import surrogate from './demos/surrogate.js';
 import emulator from './demos/emulator.js';
 import floodClimate from './demos/floodclimate.js';
+import wrappers from './demos/wrappers.js';
 
-const DEMOS = { ...ecosystem, ...caseStudy, ...sampling, ...sfincs, ...surrogate, ...emulator, ...floodClimate };
+const DEMOS = { ...ecosystem, ...caseStudy, ...sampling, ...sfincs, ...surrogate, ...emulator, ...floodClimate, ...wrappers };
 
 function start(el) {
   if (!el._demo) {
@@ -71,3 +72,31 @@ deck.initialize(OPTIONS).then(() => {
 });
 
 window.deck = deck;
+
+// Figure viewer: any element with data-img opens the image on top of the slide.
+// Esc, a click or any key closes it (the keys do not reach reveal meanwhile).
+const box = document.createElement('div');
+box.className = 'lightbox';
+box.innerHTML = '<figure><img alt=""><figcaption></figcaption></figure>';
+document.body.append(box);
+const closeBox = () => box.classList.remove('open');
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-img]');
+  if (!t) return;
+  const img = box.querySelector('img');
+  img.style.width = '';
+  img.onload = () => {
+    const k = Math.min(0.92 * innerWidth / img.naturalWidth, 0.84 * innerHeight / img.naturalHeight);
+    img.style.width = `${Math.round(img.naturalWidth * k)}px`;
+  };
+  img.src = t.dataset.img;
+  box.querySelector('figcaption').textContent = t.dataset.alt || '';
+  box.classList.add('open');
+  t.blur();
+});
+box.addEventListener('click', closeBox);
+window.addEventListener('keydown', e => {
+  if (!box.classList.contains('open')) return;
+  e.stopImmediatePropagation(); e.preventDefault();
+  closeBox();
+}, true);

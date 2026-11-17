@@ -1,845 +1,1432 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HySfincs · InterJIA 2026</title>
-<meta name="description" content="Hybrid compound-flood modelling of the Santoña estuary with BlueMath: interactive slides of the InterJIA workshop (GeoOcean, Universidad de Cantabria).">
-<link rel="icon" href="img/geoocean.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="vendor/reveal/reset.min.css">
-<link rel="stylesheet" href="vendor/reveal/reveal.min.css">
-<link rel="stylesheet" href="css/theme.css">
-<link rel="stylesheet" href="css/bricks.css">
-</head>
-<body>
-<div class="reveal">
-<div class="slides">
 
-<!-- =====================================================================
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HyDeCoFfEE</title>
+  <meta name="description"
+    content="Hybrid compound-flood modelling of the Santoña estuary with BlueMath: interactive slides of the InterJIA workshop (GeoOcean, Universidad de Cantabria).">
+  <link rel="icon" href="img/geoocean.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="vendor/reveal/reset.min.css">
+  <link rel="stylesheet" href="vendor/reveal/reveal.min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/bricks.css">
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- =====================================================================
      0. INTRO
      ===================================================================== -->
-<section class="title" data-state="title">
-  <div class="frame full">
-    <div class="cols c-6-4" style="align-items:center">
-      <div class="stack" style="gap:1.2em">
-        <div class="eyebrow">InterJIA workshop · Madrid · November 2026</div>
-        <h1>Hybrid modelling of <em>compound floods</em> with BlueMath</h1>
-        <p class="lede">HySfincs: sea, river and rain in the Santoña estuary. From 100 SFINCS simulations to 300 years of flood maps, in your browser and in your notebooks.</p>
-        <div class="logos" style="margin-top:1.2em">
-          <img src="img/geoocean.png" alt="GeoOcean">
-          <img src="img/UC.png" alt="Universidad de Cantabria">
-          <img class="wide" src="img/interjia.png" alt="IAHR">
+      <section class="title" data-state="title">
+        <div class="frame full">
+          <div class="cols c-6-4" style="align-items:center">
+            <div class="stack" style="gap:1.2em">
+              <div class="eyebrow">InterJIA workshop · Madrid · November 2026</div>
+              <h1>Hybrid modelling of <em>compound floods</em> with BlueMath</h1>
+              <p class="lede"><b>HyDeCoFfEE</b>: sea, river and rain in the Santoña estuary. From 100 SFINCS simulations
+                to 3 × 100 years of flood maps, in your browser and in your notebooks.</p>
+              <p class="small muted">A simpler version of <a href="https://doi.org/10.1016/j.ecss.2026.110271"
+                  target="_blank" rel="noopener">HyCoFfEE</a> (<i>Hybrid Approaches Predicting Compound Flooding for
+                  Estuarine Environments</i>), with SFINCS instead of SCHISM.</p>
+              <div class="logos" style="margin-top:1.2em">
+                <img src="img/geoocean.png" alt="GeoOcean">
+                <img src="img/UC.png" alt="Universidad de Cantabria">
+                <img class="wide" src="img/interjia.png" alt="IAHR">
+              </div>
+              <p class="small muted" style="margin-top:.4em">Geomatics and Ocean Engineering Group (GeoOcean) ·
+                Universidad de Cantabria</p>
+            </div>
+            <div class="figure fill" data-demo="title-map"></div>
+          </div>
         </div>
-        <p class="small muted" style="margin-top:.4em">Geomatics and Ocean Engineering Group (GeoOcean) · Universidad de Cantabria</p>
-      </div>
-      <div class="figure fill" data-demo="title-map"></div>
-    </div>
-  </div>
-  <aside class="notes">Welcome. Two hours: short talks, each followed by a notebook. Everything you see here runs in the browser; the notebooks run in Codespaces.</aside>
-</section>
+        <aside class="notes">Welcome. Two hours: short talks, each followed by a notebook. Everything you see here runs
+          in the browser; the notebooks run in Codespaces.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Today</div>
-      <h2>Four steps, four notebooks</h2>
-      <p class="lede">Each block is a short talk with interactive demos, then you run the notebook. About two hours in total.</p>
-    </div>
-    <div class="stack" style="justify-content:center">
-      <div class="pipeline" style="grid-template-columns:repeat(5,1fr)">
-        <div class="step"><span class="n">15 min</span><h3>BlueMath &amp; the case</h3><p>Why hybrid models, and the Santoña estuary.</p></div>
-        <div class="step"><span class="n">15 + 25 min · notebook 01</span><h3>Sample &amp; simulate</h3><p>LHS + MDA pick 100 days, SFINCS floods them, PCA compresses the maps.</p><span class="tk k-stats">LHS · MDA · PCA</span></div>
-        <div class="step"><span class="n">10 + 10 min · notebook 02</span><h3>Surrogate</h3><p>An RBF learns the flood map of any day in milliseconds.</p><span class="tk k-stats">RBF</span></div>
-        <div class="step"><span class="n">10 + 10 min · notebook 03</span><h3>Climate emulator</h3><p>Weather types and copulas generate 300 years of plausible days.</p><span class="tk k-stats">KMA · copulas</span></div>
-        <div class="step"><span class="n">10 + 10 min · notebook 04</span><h3>Flood climate</h3><p>110,000 days through the surrogate: return periods and flood maps.</p><span class="tk k-method">HyFlood</span></div>
-      </div>
-      <div class="callout" style="margin-top:1.2em">Got lost? Set <code>USE_PRETRAINED = True</code> at the top of notebooks 02 and 04: they then read our models from <code>notebooks/pretrained/</code>.</div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Today</div>
+            <h2>Four steps, four notebooks</h2>
+            <p class="lede">Each block is a short talk with interactive demos, then you run the notebook. About two
+              hours in total.</p>
+          </div>
+          <div class="stack" style="justify-content:center">
+            <div class="pipeline" style="grid-template-columns:repeat(5,1fr)">
+              <div class="step"><span class="n">15 min</span>
+                <h3>BlueMath &amp; the case</h3>
+                <p>Why hybrid models, and the Santoña estuary.</p>
+              </div>
+              <div class="step"><span class="n">15 + 25 min · notebook 01</span>
+                <h3>Sample &amp; simulate</h3>
+                <p>LHS + MDA pick 100 days, SFINCS floods them, PCA compresses the maps.</p><span class="tk k-stats">LHS
+                  · MDA · PCA</span>
+              </div>
+              <div class="step"><span class="n">10 + 10 min · notebook 02</span>
+                <h3>Surrogate</h3>
+                <p>An RBF learns the flood map of any day in milliseconds.</p><span class="tk k-stats">RBF</span>
+              </div>
+              <div class="step"><span class="n">10 + 10 min · notebook 03</span>
+                <h3>Climate emulator</h3>
+                <p>Weather types and copulas generate 3 × 100 years of plausible days.</p><span class="tk k-stats">KMA ·
+                  copulas</span>
+              </div>
+              <div class="step"><span class="n">10 + 10 min · notebook 04</span>
+                <h3>Flood climate</h3>
+                <p>110,000 days through the surrogate: return periods and flood maps.</p><span
+                  class="tk k-method">HyFlood</span>
+              </div>
+            </div>
+            <div class="callout" style="margin-top:1.2em">Got lost? Set <code>USE_PRETRAINED = True</code> at the top of
+              notebooks 02 and 04: they then read our models from <code>notebooks/pretrained/</code>.</div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Your lab for today</div>
-      <h2>Everything is ready in the browser</h2>
-    </div>
-    <div class="cols c2" style="align-content:start">
-      <div class="stack">
-        <div class="card">
-          <h3>1 · Open Codespaces</h3>
-          <p class="small">On <span class="mono">github.com/GeoOcean/BlueMath_Course_InterJIA</span>, click <b>Code → Codespaces → Create</b>. Wait about a minute: everything is installed.</p>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Your lab for today</div>
+            <h2>Everything is ready in the browser</h2>
+          </div>
+          <div class="cols c2" style="align-content:start">
+            <div class="stack">
+              <div class="card">
+                <h3>1 · Open Codespaces</h3>
+                <p class="small">On <span class="mono">github.com/GeoOcean/BlueMath_Course_InterJIA</span>, click
+                  <b>Code → Codespaces → Create</b>. Wait about a minute: everything is installed.</p>
+              </div>
+              <div class="card">
+                <h3>2 · Run the notebooks in order</h3>
+                <p class="small">Open <code>notebooks/01</code> and choose the Python kernel in <span
+                    class="mono">/opt/conda</span>. Then 02, 03 and 04.</p>
+              </div>
+              <div class="card">
+                <h3>3 · Stuck?</h3>
+                <p class="small">Set <code>USE_PRETRAINED = True</code> at the top of notebooks 02 and 04
+                  (<code>run_sfincs = False</code> in 01) and continue with our results.</p>
+              </div>
+            </div>
+            <div class="card soft mono small" style="white-space:pre;line-height:1.55;align-self:start">notebooks/
+              ├── <b>01_SFINCS_wrapper.ipynb</b>
+              ├── <b>02_Surrogate.ipynb</b>
+              ├── <b>03_Emulator.ipynb</b>
+              ├── <b>04_Flood_climate.ipynb</b>
+              ├── data/ inputs
+              ├── pretrained/ our results
+              └── utils/ helper code</div>
+          </div>
         </div>
-        <div class="card">
-          <h3>2 · Run the notebooks in order</h3>
-          <p class="small">Open <code>notebooks/01</code> and choose the Python kernel in <span class="mono">/opt/conda</span>. Then 02, 03 and 04.</p>
-        </div>
-        <div class="card">
-          <h3>3 · Stuck?</h3>
-          <p class="small">Set <code>USE_PRETRAINED = True</code> at the top of notebooks 02 and 04 (<code>run_sfincs = False</code> in 01) and continue with our results.</p>
-        </div>
-      </div>
-      <div class="card soft mono small" style="white-space:pre;line-height:1.55;align-self:start">notebooks/
-├── <b>01_SFINCS_wrapper.ipynb</b>
-├── <b>02_Surrogate.ipynb</b>
-├── <b>03_Emulator.ipynb</b>
-├── <b>04_Flood_climate.ipynb</b>
-├── data/          inputs
-├── pretrained/    our results
-└── utils/         helper code</div>
-    </div>
-  </div>
-  <aside class="notes">Prefer your own machine? The README explains how to run the same setup with Docker or conda.</aside>
-</section>
+        <aside class="notes">Prefer your own machine? The README explains how to run the same setup with Docker or
+          conda.</aside>
+      </section>
 
-<!-- =====================================================================
+      <!-- =====================================================================
+     WHO WE ARE
+     ===================================================================== -->
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Who we are</div>
+            <h2>GeoOcean: Geomatics and Ocean Engineering group</h2>
+          </div>
+          <div class="cols c-4-6" style="align-items:center">
+            <div class="stack" style="gap:1.1em">
+              <img src="img/geoocean.png" alt="GeoOcean" class="go-logo">
+              <p class="lede">Universidad de Cantabria, Santander. We study ocean and coastal processes with numerical
+                models, statistics and data, and turn the methods into open tools such as BlueMath.</p>
+              <p class="mono small"><a href="https://geoocean.unican.es" target="_blank"
+                  rel="noopener">geoocean.unican.es</a></p>
+            </div>
+            <div class="stack" style="gap:1.1em">
+              <div class="cols c4 go-stats">
+                <div class="card">
+                  <div class="big-num">16</div>
+                  <p class="small muted">people</p>
+                </div>
+                <div class="card">
+                  <div class="big-num">47</div>
+                  <p class="small muted">projects</p>
+                </div>
+                <div class="card">
+                  <div class="big-num">141</div>
+                  <p class="small muted">publications</p>
+                </div>
+                <div class="card">
+                  <div class="big-num">24</div>
+                  <p class="small muted">partners</p>
+                </div>
+              </div>
+              <div class="go-lines">
+                <span>Coastal flooding &amp; storm surge</span><span>Waves &amp; nearshore processes</span>
+                <span>Estuarine hydrodynamics</span><span>Climate change &amp; sea level</span>
+                <span>Data mining &amp; metamodels</span><span>Risk modelling</span>
+                <span>Geomatics &amp; remote sensing</span><span>Scientific software</span>
+              </div>
+              <p class="small muted">With partners such as USGS, NOAA, Scripps, CSIRO, NIWA, the Pacific Community,
+                Puertos del Estado and IEO.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">Numbers from geoocean.unican.es (November 2026).</aside>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Your instructors today</div>
+            <h2>Who is talking</h2>
+          </div>
+          <div class="cols c2" style="align-content:center">
+            <div class="card person">
+              <img src="img/team/jared.jpg" alt="Jared Ortiz-Angulo">
+              <div class="stack tight">
+                <h3>Jared Ortiz-Angulo</h3>
+                <p class="mono-label tiny">PhD student · compound flooding</p>
+                <p class="small">Civil engineer (Granada), MSc in Coast and Port Engineering (Cantabria) and expert in
+                  numerical simulation (UPM). Many projects on coastal processes and on the impact of climate change on
+                  the coast.</p>
+                <p class="small">PhD at Universidad de Cantabria: hybrid short-term prediction and climate-change
+                  projection systems for <b>compound flooding</b>.</p>
+                <p class="mono tiny"><a href="mailto:jared.ortizangulo@unican.es">jared.ortizangulo@unican.es</a></p>
+              </div>
+            </div>
+            <div class="card person">
+              <img src="img/team/javier.jpg" alt="Javier Tausia">
+              <div class="stack tight">
+                <h3>Javier Tausia</h3>
+                <p class="mono-label tiny">Software developer · technical researcher</p>
+                <p class="small">Physics (2016) and MSc in Data Science (2020), Universidad de Cantabria.</p>
+                <p class="small">Develops efficient meteo-oceanographic tools, and new ways of coding that widen the
+                  usability and reach of the group's methods: <b>BlueMath</b>.</p>
+                <p class="mono tiny"><a href="mailto:javier.tausia@unican.es">javier.tausia@unican.es</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
      1. BLUEMATH
      ===================================================================== -->
-<section>
-  <div class="frame full">
-    <div class="cols c-4-6" style="align-items:center">
-      <div class="stack" style="gap:1em">
-        <div class="eyebrow">BlueMath · GeoOcean, Universidad de Cantabria</div>
-        <h1 style="font-size:2.6em">Small pieces.<br><em>Bigger</em> ocean science.</h1>
-        <p class="lede">BlueMath is an open-source Python framework for the statistical analysis and simulation of coastal climate hazards. Years of research broken into small, reusable pieces that anyone can snap together into methods and climate services.</p>
-        <p class="mono small"><a href="https://github.com/GeoOcean/BlueMath" target="_blank" rel="noopener">github.com/GeoOcean/BlueMath</a></p>
-      </div>
-      <div data-demo="bricks-hero"></div>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Why we built it</div>
-      <h2>Most coastal research is hard to reuse</h2>
-    </div>
-    <div class="stack" style="justify-content:center;gap:1.6em" data-demo="count-up">
-      <div class="stats">
-        <div class="stat"><div class="num" data-count="70">70%</div><p>of researchers failed to reproduce someone else's published research.</p><div class="src">Baker, 2016</div></div>
-        <div class="stat"><div class="num" data-count="50" data-prefix="&gt;">&gt;50%</div><p>failed to reproduce their own experiments.</p><div class="src">Baker, 2016</div></div>
-        <div class="stat"><div class="num" data-count="11">11%</div><p>of the analysed papers provided their code.</p><div class="src">Jansen et al., 2020</div></div>
-      </div>
-      <p style="max-width:44em">Research slows down when every new method has to be rebuilt from scratch before it fits into an existing workflow. BlueMath turns that work into shared pieces that are <b>written once, tested, and reused</b>.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Three layers</div>
-      <h2>Pieces snap into methods. Methods stack into services.</h2>
-    </div>
-    <div data-demo="explorer" class="fill"></div>
-  </div>
-  <aside class="notes">Click a method: the wires show the toolkit pieces it uses. Today we build HyFlood (LHS, MDA, PCA, SFINCS + an interpolator) and feed it with a MUSCLE-like climate emulator: the "probabilistic flood risk" service.</aside>
-</section>
-
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">How you run it today</div>
-      <h2>One image, every machine</h2>
-    </div>
-    <div class="layers">
-      <div class="lay-row fragment fade-up" data-fragment-index="4">
-        <div class="lay-k">You work here</div>
-        <div class="lay k-data2"><img src="img/icons/jupyter.svg" alt=""><div><b>This repository</b><small>notebooks and data</small></div></div>
-      </div>
-      <div class="lay-row">
-        <div class="lay-k fragment fade-up" data-fragment-index="2">Docker image<small>geoocean/interjia</small></div>
-        <div class="lay-image">
-          <div class="lay k-stats2 fragment fade-up" data-fragment-index="3"><img src="img/icons/python.svg" alt=""><img src="img/geoocean.png" alt=""><div><b>Python + bluemath-tk</b><small>and everything the notebooks need</small></div></div>
-          <div class="lay k-model2 fragment fade-up" data-fragment-index="2"><img src="img/icons/fortran.svg" alt=""><div><b>SFINCS</b><small>the flood model</small></div></div>
-          <div class="lay k-os2 fragment fade-up" data-fragment-index="2"><img src="img/icons/ubuntu.svg" alt=""><div><b>Ubuntu 22.04</b><small>system libraries</small></div></div>
+      <section>
+        <div class="frame full">
+          <div class="cols c-4-6" style="align-items:center">
+            <div class="stack" style="gap:1em">
+              <div class="eyebrow">BlueMath · GeoOcean, Universidad de Cantabria</div>
+              <h1 style="font-size:2.6em">Small pieces.<br><em>Bigger</em> ocean science.</h1>
+              <p class="lede">BlueMath is an open-source Python framework for the statistical analysis and simulation of
+                coastal climate hazards. Years of research broken into small, reusable pieces that anyone can snap
+                together into methods and climate services.</p>
+              <p class="mono small"><a href="https://github.com/GeoOcean/BlueMath" target="_blank"
+                  rel="noopener">github.com/GeoOcean/BlueMath</a></p>
+            </div>
+            <div data-demo="bricks-hero"></div>
+          </div>
         </div>
-      </div>
-      <div class="lay-row fragment fade-up" data-fragment-index="1">
-        <div class="lay-k">Runs on</div>
-        <div class="lay-hosts">
-          <div class="lay host"><img src="img/icons/github.svg" alt=""><div><b>GitHub Codespaces</b><small>in the browser · today</small></div></div>
-          <div class="lay host"><img src="img/icons/docker.svg" alt=""><div><b>Your laptop</b><small>Docker · Linux, Windows, macOS</small></div></div>
-          <div class="lay host"><img src="img/icons/docker.svg" alt="" style="filter:grayscale(1)"><div><b>A cluster</b><small>Apptainer · many cores</small></div></div>
-        </div>
-      </div>
-      <p class="small muted fragment" data-fragment-index="5">Installed once, the same everywhere: same results on any machine. Platforms such as <a href="https://dive.edito.eu" target="_blank" rel="noopener">EDITO</a> run models the same way.</p>
-    </div>
-  </div>
-  <aside class="notes">Build it from the bottom: the machine, then the image (Ubuntu and SFINCS compiled once), then Python with bluemath-tk, then the repository mounted on top. Only the bottom row changes between Codespaces, a laptop or a cluster. Note: EDITO runs tools the same way, as containers in a cloud datalab next to its data lake.</aside>
-</section>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Coming to BlueMath</div>
-      <h2>HYDRA: hydrology and climate in Python</h2>
-    </div>
-    <div class="cols c-3-7" style="align-items:center">
-      <div class="stack" style="align-items:center;gap:1em">
-        <img src="img/hydra.png" alt="HYDRA logo" class="hydra-logo">
-        <p class="small muted center">From raw data to scenarios, simulations and risk products, in reproducible workflows.</p>
-        <p class="mono small center"><a href="https://hydra-web.yellowwave-5aaa93b0.spaincentral.azurecontainerapps.io/" target="_blank" rel="noopener">HYDRA website ↗</a></p>
-      </div>
-      <div class="stack" style="gap:1em">
-        <div class="cols c4" style="gap:.7em">
-          <div class="card"><span class="tag">1</span><h3>Data</h3><p class="small muted">Automatic downloads: precipitation, discharge, climate change, soils</p></div>
-          <div class="card"><span class="tag">2</span><h3>Climate analysis</h3><p class="small muted">Extremes, regional frequency, copulas, spatial interpolation</p></div>
-          <div class="card"><span class="tag">3</span><h3>Stochastic generation</h3><p class="small muted">Synthetic series and multisite rainfall</p></div>
-          <div class="card"><span class="tag">4</span><h3>Modelling</h3><p class="small muted">Hydrological and hydraulic models, automated</p></div>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Why we built it</div>
+            <h2>Most coastal research is hard to reuse</h2>
+          </div>
+          <div class="stack" style="justify-content:center;gap:1.6em" data-demo="count-up">
+            <div class="stats">
+              <div class="stat">
+                <div class="num" data-count="70">70%</div>
+                <p>of researchers failed to reproduce someone else's published research.</p>
+                <div class="src">Baker, 2016</div>
+              </div>
+              <div class="stat">
+                <div class="num" data-count="50" data-prefix="&gt;">&gt;50%</div>
+                <p>failed to reproduce their own experiments.</p>
+                <div class="src">Baker, 2016</div>
+              </div>
+              <div class="stat">
+                <div class="num" data-count="11">11%</div>
+                <p>of the analysed papers provided their code.</p>
+                <div class="src">Jansen et al., 2020</div>
+              </div>
+            </div>
+            <p style="max-width:44em">Research slows down when every new method has to be rebuilt from scratch before it
+              fits into an existing workflow. BlueMath turns that work into shared pieces that are <b>written once,
+                tested, and reused</b>.</p>
+          </div>
         </div>
-        <div class="cols c2" style="gap:.7em">
-          <div class="card soft"><p class="tiny muted mono-label">DATA SOURCES</p><p class="small">ERA5 · GPM · AEMET · Meteostat · GloFAS · GRDC · CMIP6 · SoilGrids</p></div>
-          <div class="card soft"><p class="tiny muted mono-label">MODELS</p><p class="small">HEC-HMS · SWAT+ · HEC-RAS · <b>SFINCS</b></p></div>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Three layers</div>
+            <h2>Pieces snap into methods. Methods stack into services.</h2>
+          </div>
+          <div data-demo="explorer" class="fill"></div>
         </div>
-        <p class="small">Today the river discharge and the rain come as files. With HYDRA in BlueMath, the same SFINCS workflow could start from the downloads and the stochastic rainfall.</p>
-      </div>
-    </div>
-  </div>
-  <aside class="notes">HYDRA, by Salvador Navas (GeoOcean): a modular library for hydrological and climate analysis and flood modelling. 4 modules, 51 notebooks, pilot cases on the Manzanares (Madrid) and the 2024 Valencia DANA. It will probably be included in BlueMath soon.</aside>
-</section>
+        <aside class="notes">Click a method: the wires show the toolkit pieces it uses. Today we build HyFlood (LHS,
+          MDA, PCA, SFINCS + an interpolator) and feed it with a MUSCLE-like climate emulator: the "probabilistic flood
+          risk" service.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">The hybrid recipe</div>
-      <h2>Expensive physics where it matters, statistics everywhere else</h2>
-    </div>
-    <div class="stack" style="gap:1.2em">
-      <div class="pipeline">
-        <div class="step fragment fade-up" data-fragment-index="1"><span class="n">01</span><h3>Sample</h3><p>Cover all plausible days</p><span class="tk k-stats">LHS</span></div>
-        <div class="step fragment fade-up" data-fragment-index="1"><span class="n">01</span><h3>Select</h3><p>Keep the 100 most different</p><span class="tk k-stats">MDA</span></div>
-        <div class="step fragment fade-up" data-fragment-index="2"><span class="n">01</span><h3>Simulate</h3><p>Run the physics on those 100 days only</p><span class="tk k-model">SFINCS</span></div>
-        <div class="step fragment fade-up" data-fragment-index="3"><span class="n">01</span><h3>Reduce</h3><p>Flood maps → a few numbers</p><span class="tk k-stats">PCA</span></div>
-        <div class="step fragment fade-up" data-fragment-index="3"><span class="n">02</span><h3>Learn</h3><p>Forcing → numbers → map</p><span class="tk k-stats">RBF</span></div>
-        <div class="step fragment fade-up" data-fragment-index="4"><span class="n">03 · 04</span><h3>Emulate</h3><p>Thousands of years of days → flood statistics</p><span class="tk k-stats">KMA · copulas</span></div>
-      </div>
-      <div class="cols c3 fragment" data-fragment-index="5" style="margin-top:.6em">
-        <div class="card"><div class="big-num" style="color:var(--river)">2.6 days</div><p class="small muted">SFINCS on the 110,673 emulated days (~2 s each)</p></div>
-        <div class="card"><div class="big-num" style="color:var(--sea)">~5 min</div><p class="small muted">SFINCS on the 100 selected days, in parallel on a laptop</p></div>
-        <div class="card"><div class="big-num" style="color:var(--rain)">seconds</div><p class="small muted">The surrogate on the 110,673 days</p></div>
-      </div>
-    </div>
-  </div>
-  <aside class="notes">This is the whole course in one slide. The numbers at the bottom are the reason hybrid models exist.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">How you run it today</div>
+            <h2>One image, every machine</h2>
+          </div>
+          <div class="layers">
+            <div class="lay-row fragment fade-up" data-fragment-index="4">
+              <div class="lay-k">You work here</div>
+              <div class="lay k-data2"><img src="img/icons/jupyter.svg" alt="">
+                <div><b>This repository</b><small>notebooks and data</small></div>
+              </div>
+            </div>
+            <div class="lay-row">
+              <div class="lay-k fragment fade-up" data-fragment-index="2">Docker image<small>geoocean/interjia</small>
+              </div>
+              <div class="lay-image">
+                <div class="lay k-stats2 fragment fade-up" data-fragment-index="3"><img src="img/icons/python.svg"
+                    alt=""><img src="img/geoocean.png" alt="">
+                  <div><b>Python + bluemath-tk</b><small>and everything the notebooks need</small></div>
+                </div>
+                <div class="lay k-model2 fragment fade-up" data-fragment-index="2"><img src="img/icons/fortran.svg"
+                    alt="">
+                  <div><b>SFINCS</b><small>the flood model</small></div>
+                </div>
+                <div class="lay k-os2 fragment fade-up" data-fragment-index="2"><img src="img/icons/ubuntu.svg" alt="">
+                  <div><b>Ubuntu 22.04</b><small>system libraries</small></div>
+                </div>
+              </div>
+            </div>
+            <div class="lay-row fragment fade-up" data-fragment-index="1">
+              <div class="lay-k">Runs on</div>
+              <div class="lay-hosts">
+                <div class="lay host"><img src="img/icons/github.svg" alt="">
+                  <div><b>GitHub Codespaces</b><small>in the browser · today</small></div>
+                </div>
+                <div class="lay host"><img src="img/icons/docker.svg" alt="">
+                  <div><b>Your laptop</b><small>Docker · Linux, Windows, macOS</small></div>
+                </div>
+                <div class="lay host"><img src="img/icons/docker.svg" alt="" style="filter:grayscale(1)">
+                  <div><b>A cluster</b><small>Apptainer · many cores</small></div>
+                </div>
+              </div>
+            </div>
+            <p class="small muted fragment" data-fragment-index="5">Installed once, the same everywhere: same results on
+              any machine. Platforms such as <a href="https://dive.edito.eu" target="_blank" rel="noopener">EDITO</a>
+              run models the same way.</p>
+          </div>
+        </div>
+        <aside class="notes">Build it from the bottom: the machine, then the image (Ubuntu and SFINCS compiled once),
+          then Python with bluemath-tk, then the repository mounted on top. Only the bottom row changes between
+          Codespaces, a laptop or a cluster. Note: EDITO runs tools the same way, as containers in a cloud datalab next
+          to its data lake.</aside>
+      </section>
 
-<!-- =====================================================================
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Coming to BlueMath</div>
+            <h2>HYDRA: hydrology and climate in Python</h2>
+          </div>
+          <div class="cols c-3-7" style="align-items:center">
+            <div class="stack" style="align-items:center;gap:1em">
+              <img src="img/hydra.png" alt="HYDRA logo" class="hydra-logo">
+              <p class="small muted center">From raw data to scenarios, simulations and risk products, in reproducible
+                workflows.</p>
+              <p class="mono small center"><a
+                  href="https://hydra-web.yellowwave-5aaa93b0.spaincentral.azurecontainerapps.io/" target="_blank"
+                  rel="noopener">HYDRA website ↗</a></p>
+            </div>
+            <div class="stack" style="gap:1em">
+              <div class="cols c4" style="gap:.7em">
+                <div class="card"><span class="tag">1</span>
+                  <h3>Data</h3>
+                  <p class="small muted">Automatic downloads: precipitation, discharge, climate change, soils</p>
+                </div>
+                <div class="card"><span class="tag">2</span>
+                  <h3>Climate analysis</h3>
+                  <p class="small muted">Extremes, regional frequency, copulas, spatial interpolation</p>
+                </div>
+                <div class="card"><span class="tag">3</span>
+                  <h3>Stochastic generation</h3>
+                  <p class="small muted">Synthetic series and multisite rainfall</p>
+                </div>
+                <div class="card"><span class="tag">4</span>
+                  <h3>Modelling</h3>
+                  <p class="small muted">Hydrological and hydraulic models, automated</p>
+                </div>
+              </div>
+              <div class="cols c2" style="gap:.7em">
+                <div class="card soft">
+                  <p class="tiny muted mono-label">DATA SOURCES</p>
+                  <p class="small">ERA5 · GPM · AEMET · Meteostat · GloFAS · GRDC · CMIP6 · SoilGrids</p>
+                </div>
+                <div class="card soft">
+                  <p class="tiny muted mono-label">MODELS</p>
+                  <p class="small">HEC-HMS · SWAT+ · HEC-RAS · <b>SFINCS</b></p>
+                </div>
+              </div>
+              <p class="small">Today the river discharge and the rain come as files. With HYDRA in BlueMath, the same
+                SFINCS workflow could start from the downloads and the stochastic rainfall.</p>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">HYDRA, by Salvador Navas (GeoOcean): a modular library for hydrological and climate
+          analysis and flood modelling. 4 modules, 51 notebooks, pilot cases on the Manzanares (Madrid) and the 2024
+          Valencia DANA. It will probably be included in BlueMath soon.</aside>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">The hybrid recipe</div>
+            <h2>Expensive physics where it matters, statistics everywhere else</h2>
+          </div>
+          <div class="stack" style="gap:1.2em">
+            <div class="pipeline">
+              <div class="step fragment fade-up" data-fragment-index="1"><span class="n">01</span>
+                <h3>Sample</h3>
+                <p>Cover all plausible days</p><span class="tk k-stats">LHS</span>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="1"><span class="n">01</span>
+                <h3>Select</h3>
+                <p>Keep the 100 most different</p><span class="tk k-stats">MDA</span>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="2"><span class="n">01</span>
+                <h3>Simulate</h3>
+                <p>Run the physics on those 100 days only</p><span class="tk k-model">SFINCS</span>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="3"><span class="n">01</span>
+                <h3>Reduce</h3>
+                <p>Flood maps → a few numbers</p><span class="tk k-stats">PCA</span>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="3"><span class="n">02</span>
+                <h3>Learn</h3>
+                <p>Forcing → numbers → map</p><span class="tk k-stats">RBF</span>
+              </div>
+              <div class="step fragment fade-up" data-fragment-index="4"><span class="n">03 · 04</span>
+                <h3>Emulate</h3>
+                <p>Thousands of years of days → flood statistics</p><span class="tk k-stats">KMA · copulas</span>
+              </div>
+            </div>
+            <div class="cols c3 fragment" data-fragment-index="5" style="margin-top:.6em">
+              <div class="card">
+                <div class="big-num" style="color:var(--river)">2.6 days</div>
+                <p class="small muted">SFINCS on the 110,673 emulated days (~2 s each)</p>
+              </div>
+              <div class="card">
+                <div class="big-num" style="color:var(--sea)">~5 min</div>
+                <p class="small muted">SFINCS on the 100 selected days, in parallel on a laptop</p>
+              </div>
+              <div class="card">
+                <div class="big-num" style="color:var(--rain)">seconds</div>
+                <p class="small muted">The surrogate on the 110,673 days</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">This is the whole course in one slide. The numbers at the bottom are the reason hybrid
+          models exist.</aside>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Where it is applied</div>
+            <h2>Same hybrid recipe, different processes</h2>
+          </div>
+          <div class="stack" style="gap:.7em">
+            <div class="table-wrap" data-prevent-swipe>
+              <table class="deck-table">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>What it does</th>
+                    <th>Figure</th>
+                    <th>Paper</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>BinWaves</td>
+                    <td>Nearshore wave spectra by superposing monochromatic cases (SWAN)</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/binwaves-figure.jpg"
+                        data-alt="BinWaves">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.ocemod.2024.102346" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr>
+                    <td>HyWaves</td>
+                    <td>Nearshore wave spectra with a SnapWave metamodel (MDA + PCA + GP)</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hywaves-figure.jpg"
+                        data-alt="HyWaves">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.ocemod.2023.102210" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr>
+                    <td>HyWaThy / HyBeat</td>
+                    <td>Nearshore waves over changing beach bathymetry (XBeach)</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hywathy-figure.jpg"
+                        data-alt="HyWaThy / HyBeat">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.coastaleng.2025.104837" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr>
+                    <td>HySwash</td>
+                    <td>Nearshore hydrodynamics and run-up on beaches and reefs (SWASH)</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hyswash-figure.jpg"
+                        data-alt="HySwash">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.oceaneng.2023.116419" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr>
+                    <td>HyCReWW</td>
+                    <td>Wave run-up on coral reefs of any shape (XBeach)</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hycreww-figure.jpg"
+                        data-alt="HyCReWW">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.cageo.2019.03.004" target="_blank" rel="noopener">Paper ↗</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>SHyTCWaves</td>
+                    <td>Tropical-cyclone wave fields without a SWAN run per storm</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/shytcwaves-figure.jpg"
+                        data-alt="SHyTCWaves">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.ocemod.2024.102341" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr>
+                    <td>GreenSurge</td>
+                    <td>Storm-surge fields with an additive hybrid model</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/greensurge-figure.jpg"
+                        data-alt="GreenSurge">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.coastaleng.2024.104691" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr class="today">
+                    <td>HyCoFfEE</td>
+                    <td>Compound flooding in estuaries from waves, surge, tide and rain (SCHISM)</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hycoffee-figure.jpg"
+                        data-alt="HyCoFfEE">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.ecss.2026.110271" target="_blank" rel="noopener">Paper ↗</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>HyFlood</td>
+                    <td>High-resolution compound coastal flood maps with cascaded surrogates</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hyflood-figure.jpg"
+                        data-alt="HyFlood">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.coastaleng.2026.105124" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                  <tr>
+                    <td>HySalt</td>
+                    <td>Estuary salinity and water level from a few Delft3D-FLOW runs</td>
+                    <td><button type="button" class="btn table-btn" data-img="img/hybrid/hysalt-figure.jpg"
+                        data-alt="HySalt">View ↗</button></td>
+                    <td><a href="https://doi.org/10.1016/j.coastaleng.2026.105146" target="_blank" rel="noopener">Paper
+                        ↗</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="small muted">Today: <b>HyDeCoFfEE</b>, a decaff version of HyCoFfEE, and with SFINCS instead of
+              SCHISM. <br> Waves, surge, cyclones, run-up, salinity, floods: the same playbook at every scale.</p>
+          </div>
+        </div>
+        <aside class="notes">Click "View" to open each method's figure (any key closes it). All of them follow the
+          recipe of the previous slide: a few runs of an expensive model, chosen well, and a statistical layer for
+          everything else.</aside>
+      </section>
+
+      <!-- =====================================================================
      2. CASE STUDY
      ===================================================================== -->
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">The case</div>
-      <h2>The Santoña estuary floods from three sides</h2>
-    </div>
-    <div class="cols c-4-6">
-      <div class="stack" style="gap:1em">
-        <ul class="clean">
-          <li><b class="sea">The sea</b>: tide + storm surge + wave setup enter through the mouth, between El Puntal and Santoña.</li>
-          <li><b class="river">The river</b>: the Asón brings up to ~1,200 m³/s into the south of the estuary.</li>
-          <li><b class="rain">The rain</b>: falls on the whole domain, marshes and valleys included.</li>
-        </ul>
-        <div class="callout">Often the three arrive <b>on the same day</b>: a compound flood. Modelling each driver alone misses it.</div>
-        <p class="tiny muted">Hover the map: elevation from the 20 m topobathymetry (UTM 30N). The dashed area is the SFINCS domain, closed at the mouth.</p>
-      </div>
-      <div data-demo="site-map" class="fill"></div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">The case</div>
+            <h2>The Santoña estuary floods from three sides</h2>
+          </div>
+          <div class="cols c-4-6">
+            <div class="stack" style="gap:1em">
+              <ul class="clean">
+                <li><b class="sea">The sea</b>: tide + storm surge + wave setup enter through the mouth, between El
+                  Puntal and Santoña.</li>
+                <li><b class="river">The river</b>: the Asón brings up to ~1,200 m³/s into the south of the estuary.
+                </li>
+                <li><b class="rain">The rain</b>: falls on the whole domain, marshes and valleys included.</li>
+              </ul>
+              <div class="callout">Often the three arrive <b>on the same day</b>: a compound flood. Modelling each
+                driver alone misses it.</div>
+              <p class="tiny muted">Hover the map: elevation from the 20 m topobathymetry (UTM 30N). The dashed area is
+                the SFINCS domain, closed at the mouth.</p>
+            </div>
+            <div data-demo="site-map" class="fill"></div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Data · 2008–2018</div>
-      <h2>Ten years of daily drivers</h2>
-    </div>
-    <div data-demo="history-ts" class="fill"></div>
-  </div>
-  <aside class="notes">Daily maxima. TWL = astronomical tide + surge + wave setup at the mouth. Q = Asón at Ampuero. Rain = daily accumulation. Drag on the plot to zoom into a winter.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Data · 2008–2018</div>
+            <h2>Ten years of daily drivers</h2>
+          </div>
+          <div data-demo="history-ts" class="fill"></div>
+        </div>
+        <aside class="notes">Daily maxima. TWL = astronomical tide + surge + wave setup at the mouth. Q = Asón at
+          Ampuero. Rain = daily accumulation. Drag on the plot to zoom into a winter.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Data · 3,716 days</div>
-      <h2>Are the drivers related?</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="history-scatter" class="fill"></div>
-      <div class="stack" style="justify-content:center">
-        <p><b class="river">River</b> and <b class="rain">rain</b> go together: rain generates the runoff. A big flood with no rain is not physical.</p>
-        <p>The <b class="sea">sea</b> is driven by the tide, the surge and the waves: almost independent of the river.</p>
-        <div class="callout">The sampling of notebook 01 and the emulator of notebook 03 must respect this structure.</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Data · 3,716 days</div>
+            <h2>Are the drivers related?</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="history-scatter" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p><b class="river">River</b> and <b class="rain">rain</b> go together: rain generates the runoff. A big
+                flood with no rain is not physical.</p>
+              <p>The <b class="sea">sea</b> is driven by the tide, the surge and the waves: almost independent of the
+                river.</p>
+              <div class="callout">The sampling of notebook 01 and the emulator of notebook 03 must respect this
+                structure.</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- =====================================================================
+      <!-- =====================================================================
      3. NOTEBOOK 01
      ===================================================================== -->
-<section class="divider">
-  <div class="frame">
-    <div class="cols c-3-7" style="align-items:center">
-      <div class="num">01</div>
-      <div>
-        <div class="eyebrow">Notebook 01 · SFINCS wrapper</div>
-        <h1>Sample and simulate</h1>
-        <p class="lede">We cannot run SFINCS for every possible day. Which days do we run?</p>
-        <div class="learn"><span>Latin Hypercube</span><span>Maximum Dissimilarity</span><span>SFINCS forcing</span><span>subgrid</span><span>PCA</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="divider">
+        <div class="frame">
+          <div class="cols c-3-7" style="align-items:center">
+            <div class="num">01</div>
+            <div>
+              <div class="eyebrow">Notebook 01 · SFINCS wrapper</div>
+              <h1>Sample and simulate</h1>
+              <p class="lede">We cannot run SFINCS for every possible day. Which days do we run?</p>
+              <div class="learn"><span>Latin Hypercube</span><span>Maximum Dissimilarity</span><span>SFINCS
+                  forcing</span><span>subgrid</span><span>PCA</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> Sampling</div>
-      <h2>Random vs Latin Hypercube</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="lhs" class="fill"></div>
-      <div class="stack" style="justify-content:center">
-        <p><b>Random</b> sampling leaves gaps and clusters, by chance.</p>
-        <p><b>LHS</b> splits every variable into <i>N</i> equal strata and puts exactly one sample in each row and each column: one shaded cell per row and per column.</p>
-        <p class="small muted">Every value range is covered, whatever <i>N</i>. Here the samples sit at the centre of their cells; in bluemath-tk they are placed at random inside them. In 3D (TWL, Q, rain) the idea is the same.</p>
-        <div class="callout small">Notebook: <code>LHS(num_dimensions=3, seed=1)</code> → 20,000 samples.</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Sampling</div>
+            <h2>Random vs Latin Hypercube</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="lhs" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p><b>Random</b> sampling leaves gaps and clusters, by chance.</p>
+              <p><b>LHS</b> splits every variable into <i>N</i> equal strata and puts exactly one sample in each row and
+                each column: one shaded cell per row and per column.</p>
+              <p class="small muted">Every value range is covered, whatever <i>N</i>. Here the samples sit at the centre
+                of their cells; in bluemath-tk they are placed at random inside them. In 3D (TWL, Q, rain) the idea is
+                the same.</p>
+              <div class="callout small">Notebook: <code>LHS(num_dimensions=3, seed=1)</code> → 20,000 samples.</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> Sampling</div>
-      <h2>Keep it physical</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="hull" class="fill"></div>
-      <div class="stack" style="justify-content:center">
-        <p>The LHS samples <b class="river">Q</b> and <b class="rain">rain</b> independently: it proposes a river flood on a dry day.</p>
-        <p>We keep only the samples inside the <b>convex hull</b> of the observed (Q, rain) pairs.</p>
-        <p class="small muted">The <b class="sea">TWL</b> is left free: high tide + river flood stays possible.</p>
-        <div class="callout small"><span data-ref="hull-count">20,000 → 13,457</span> plausible scenarios.</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Sampling</div>
+            <h2>Keep it physical</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="hull" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p>The LHS samples <b class="river">Q</b> and <b class="rain">rain</b> independently: it proposes a river
+                flood on a dry day.</p>
+              <p>We keep only the samples inside the <b>convex hull</b> of the observed (Q, rain) pairs.</p>
+              <p class="small muted">The <b class="sea">TWL</b> is left free: high tide + river flood stays possible.
+              </p>
+              <div class="callout small"><span data-ref="hull-count">20,000 → 13,457</span> plausible scenarios.</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> Selection</div>
-      <h2>Maximum Dissimilarity: the most different days</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="mda-toy" class="fill"></div>
-      <div class="stack" style="justify-content:center">
-        <ol style="margin:0;padding-left:1.2em;display:grid;gap:.5em" class="small">
-          <li>Start from an extreme point.</li>
-          <li>For every point, compute its distance to the <b>closest</b> point already selected.</li>
-          <li>Select the point with the <b>largest</b> of those distances.</li>
-          <li>Repeat until you have <i>N</i>.</li>
-        </ol>
-        <p class="small muted">The selection covers the edges first: exactly where the extremes are. Random selection mostly picks the crowded centre.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Selection</div>
+            <h2>Maximum Dissimilarity: the most different days</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="mda-toy" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <ol style="margin:0;padding-left:1.2em;display:grid;gap:.5em" class="small">
+                <li>Start from an extreme point.</li>
+                <li>For every point, compute its distance to the <b>closest</b> point already selected.</li>
+                <li>Select the point with the <b>largest</b> of those distances.</li>
+                <li>Repeat until you have <i>N</i>.</li>
+              </ol>
+              <p class="small muted">The selection covers the edges first: exactly where the extremes are. Random
+                selection mostly picks the crowded centre.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> Selection</div>
-      <h2>100 days for SFINCS</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="mda-3d" class="fill"></div>
-      <div class="stack" style="justify-content:center">
-        <p>The real selection of the notebook: <b>MDA</b> on the 13,457 plausible scenarios, normalised to [0, 1].</p>
-        <p class="small muted">Move the slider: the first cases are the corners of the space. Drag the plot to rotate it.</p>
-        <div class="callout small"><code>MDA(num_centers=100).fit(data, normalize_data=True)</code></div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Selection</div>
+            <h2>100 days for SFINCS</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="mda-3d" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p>The real selection of the notebook: <b>MDA</b> on the 13,457 plausible scenarios, normalised to [0, 1].
+              </p>
+              <p class="small muted">Move the slider: the first cases are the corners of the space. Drag the plot to
+                rotate it.</p>
+              <div class="callout small"><code>MDA(num_centers=100).fit(data, normalize_data=True)</code></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> Forcing</div>
-      <h2>From one daily value to a SFINCS forcing</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="forcing" class="fill"></div>
-      <div class="stack" style="justify-content:center;gap:.7em">
-        <p class="small"><b class="sea">Sea</b>: a triangle peaking at hour 12. The tide is symmetric around the mean level and the residual (surge + setup) is nearly constant over a day, so
-          <math display="block"><msub><mi>TWL</mi><mi>min</mi></msub><mo>=</mo><mn>2</mn><mover><mi>NTR</mi><mo>‾</mo></mover><mo>−</mo><msub><mi>TWL</mi><mi>max</mi></msub></math></p>
-        <p class="small"><b class="river">River</b>: the SCS unit hydrograph scaled to the daily peak, shifted by a random lag of ±2–6 h.</p>
-        <p class="small"><b class="rain">Rain</b>: the daily depth spread uniformly over the 24 h.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Forcing</div>
+            <h2>From one daily value to a SFINCS forcing</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="forcing" class="fill"></div>
+            <div class="stack" style="justify-content:center;gap:.7em">
+              <p class="small"><b class="sea">Sea</b>: a triangle peaking at hour 12. The tide is symmetric around the
+                mean level and the residual (surge + setup) is nearly constant over a day, so
+                <math display="block">
+                  <msub>
+                    <mi>TWL</mi>
+                    <mi>min</mi>
+                  </msub>
+                  <mo>=</mo>
+                  <mn>2</mn>
+                  <mover>
+                    <mi>NTR</mi>
+                    <mo>‾</mo>
+                  </mover>
+                  <mo>−</mo>
+                  <msub>
+                    <mi>TWL</mi>
+                    <mi>max</mi>
+                  </msub>
+                </math>
+              </p>
+              <p class="small"><b class="river">River</b>: the SCS unit hydrograph scaled to the daily peak, shifted by
+                a random lag of ±2–6 h.</p>
+              <p class="small"><b class="rain">Rain</b>: the daily depth spread uniformly over the 24 h.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> SFINCS</div>
-      <h2>A fast flood model, thanks to subgrid</h2>
-    </div>
-    <div class="cols c-4-6">
-      <div class="stack" style="gap:.8em">
-        <p class="small"><b>SFINCS</b> (Deltares) solves simplified shallow-water equations: fast enough for compound floods over large areas.</p>
-        <ul class="clean small">
-          <li><b>100 m</b> computational grid, 175 × 127 cells</li>
-          <li><b>Subgrid</b> tables from the <b>20 m</b> DEM: each cell knows how its volume and wet area grow with the level</li>
-          <li><b class="sea">Water level</b> imposed on the mouth line, <b class="river">Asón</b> at the southern edge, <b class="rain">rain</b> on every cell</li>
-          <li>~2 s per day of simulation</li>
-        </ul>
-        <p class="tiny muted">Move the water level: a coarse model without subgrid sees the cell as either dry or wet; the subgrid cell fills gradually, like the real terrain.</p>
-      </div>
-      <div data-demo="subgrid" class="fill"></div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> SFINCS</div>
+            <h2>A fast flood model, thanks to subgrid</h2>
+          </div>
+          <div class="cols c-4-6">
+            <div class="stack" style="gap:.8em">
+              <p class="small"><b>SFINCS</b> (Deltares) solves simplified shallow-water equations: fast enough for
+                compound floods over large areas.</p>
+              <ul class="clean small">
+                <li><b>100 m</b> computational grid, 175 × 127 cells</li>
+                <li><b>Subgrid</b> tables from the <b>20 m</b> DEM: each cell knows how its volume and wet area grow
+                  with the level</li>
+                <li><b class="sea">Water level</b> imposed on the mouth line, <b class="river">Asón</b> at the southern
+                  edge, <b class="rain">rain</b> on every cell</li>
+                <li>~2 s per day of simulation</li>
+              </ul>
+              <p class="tiny muted">Move the water level: a coarse model without subgrid sees the cell as either dry or
+                wet; the subgrid cell fills gradually, like the real terrain.</p>
+            </div>
+            <div data-demo="subgrid" class="fill"></div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> Results</div>
-      <h2>Each driver floods a different place</h2>
-    </div>
-    <div data-demo="sfincs-cases" class="fill"></div>
-  </div>
-  <aside class="notes">Real SFINCS results (maximum water depth on the 20 m DEM). These are the MDA cases closest to each situation, as in the notebook.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Wrappers</div>
+            <h2>One SFINCS setup, 100 cases, one dataset</h2>
+          </div>
+          <div class="stack" style="gap:1em">
+            <p class="small muted" style="max-width:52em">A bluemath-tk wrapper builds the model once, makes a folder
+              for every case, runs them anywhere and returns all the results together. You only describe what changes
+              between cases.</p>
+            <div class="cols c4 wr-flow">
+              <div class="card"><span class="tag">1 · Template</span>
+                <h3>Build it once</h3>
+                <pre class="mini-code">templates/
+├─ sfincs.ind  sfincs.msk
+└─ sfincs_subgrid.nc</pre>
+                <p class="small muted">Grid, active cells and subgrid tables from the DEM
+                  (<code>fixed_parameters</code>, HydroMT).</p>
+              </div>
+              <div class="card"><span class="tag">2 · Cases</span>
+                <h3>A folder per day</h3>
+                <pre class="mini-code">cases/
+├─ <span class="hl">0000</span>/ .bzs .dis .precip
+├─ <span class="hl">0001</span>/ ...
+└─ ... <span class="hl">100 cases</span></pre>
+                <p class="small muted">Each MDA day writes its <b class="sea">sea</b>, <b class="river">river</b> and <b
+                    class="rain">rain</b> forcing (<code>metamodel_parameters</code>).</p>
+              </div>
+              <div class="card"><span class="tag">3 · Run</span>
+                <h3>Anywhere</h3>
+                <pre class="mini-code"><span class="hl">serial</span>     sfincs
+<span class="hl">docker</span>     sfincs-cpu
+<span class="hl">apptainer</span>  sfincs.sif</pre>
+                <p class="small muted">A launcher is just a command. One case per core, a log in each folder.</p>
+              </div>
+              <div class="card"><span class="tag">4 · Collect</span>
+                <h3>One dataset back</h3>
+                <pre class="mini-code">water_level_cases(...)
+<span class="hl"># zs (case_num, y, x)</span></pre>
+                <p class="small muted">The maximum water level of the 100 cases in one xarray Dataset, ready for PCA.
+                </p>
+              </div>
+            </div>
+            <div class="card soft small"><b>Same four steps for every model:</b> SWAN · SWASH · XBeach · Delft3D ·
+              SCHISM · SFINCS · <i>your own</i>. To add the Asón river we subclassed the SFINCS wrapper:
+              <code>build_case</code> also writes <code>sfincs.src</code> + <code>sfincs.dis</code>
+              (<code>notebooks/utils/sfincs_wrapper.py</code>).</div>
+          </div>
+        </div>
+        <aside class="notes">This is what notebook 01 does in three cells. In bluemath-tk every wrapper inherits from
+          BaseModelWrapper: templates, case folders, launchers, parallel runs and logs come for free; a new model only
+          needs build_case and postprocess_case.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> PCA</div>
-      <h2>Principal components in two dimensions</h2>
-    </div>
-    <div class="cols c-6-4">
-      <div data-demo="pca-toy" class="fill"></div>
-      <div class="stack" style="justify-content:center">
-        <p>PCA finds the directions where the data <b>vary the most</b>. Rotate the axis: the variance of the projections is largest along PC1.</p>
-        <p class="small muted">With correlated variables, one direction captures almost everything, and the second adds little.</p>
-        <div class="callout small">Our "variables" are the 2,910 wet cells of a flood map. Most of them rise and fall together.</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Wrappers, live</div>
+            <h2>1 template → 100 SFINCS runs → 1 dataset</h2>
+          </div>
+          <div data-demo="wrapper-run" class="fill"></div>
+        </div>
+        <aside class="notes">Press the button four times: the same calls as notebook 01. Try the launchers before
+          running: with 25 cores on a cluster the 100 cases finish much faster. The colours are the real 100 MDA days,
+          by their strongest driver.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">01</span> PCA</div>
-      <h2>2,910 cells → 8 numbers</h2>
-    </div>
-    <div data-demo="pca-maps" class="fill"></div>
-  </div>
-  <aside class="notes">Water level map = mean + PC1·EOF1 + PC2·EOF2 + … The EOFs are maps, the PCs are the weights of each case. 8 PCs keep 99.9% of the variance.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> Results</div>
+            <h2>Each driver floods a different place</h2>
+          </div>
+          <div data-demo="sfincs-cases" class="fill"></div>
+        </div>
+        <aside class="notes">Real SFINCS results (maximum water depth on the 20 m DEM). These are the MDA cases closest
+          to each situation, as in the notebook.</aside>
+      </section>
 
-<section class="hands-on">
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Hands-on · 25 min</div>
-      <h2>Your turn: notebook 01</h2>
-    </div>
-    <div class="cols c-6-4">
-      <div class="nbcard">
-        <div class="nbname">notebooks/01_SFINCS_wrapper.ipynb</div>
-        <ol>
-          <li>Look at the historical days and build the <b>LHS + hull + MDA</b> selection.</li>
-          <li>Plot the forcing of a few cases. Which lag did each case get?</li>
-          <li>Build the SFINCS model and <b>run the 100 cases</b> (a few minutes).</li>
-          <li>Compare the flood maps of the six situations.</li>
-          <li>Fit the <b>PCA</b>: how many components do you need?</li>
-        </ol>
-        <div class="callout warn small">No SFINCS on your machine? Set <code>run_sfincs = False</code>: the notebook uses our results.</div>
-      </div>
-      <div class="stack">
-        <div class="clock">25′</div>
-        <p class="small muted">You should see:</p>
-        <div class="expect">SFINCS cases run: 100 of 100
-8 PCs explain 99.91% of the variance</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> PCA</div>
+            <h2>Principal components in two dimensions</h2>
+          </div>
+          <div class="cols c-6-4">
+            <div data-demo="pca-toy" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p>PCA finds the directions where the data <b>vary the most</b>. Rotate the axis: the variance of the
+                projections is largest along PC1.</p>
+              <p class="small muted">With correlated variables, one direction captures almost everything, and the second
+                adds little.</p>
+              <div class="callout small">Our "variables" are the 2,910 wet cells of a flood map. Most of them rise and
+                fall together.</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- =====================================================================
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">01</span> PCA</div>
+            <h2>2,910 cells → 8 numbers</h2>
+          </div>
+          <div data-demo="pca-maps" class="fill"></div>
+        </div>
+        <aside class="notes">Water level map = mean + PC1·EOF1 + PC2·EOF2 + … The EOFs are maps, the PCs are the weights
+          of each case. 8 PCs keep 99.9% of the variance.</aside>
+      </section>
+
+      <section class="hands-on">
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Hands-on · 25 min</div>
+            <h2>Your turn: notebook 01</h2>
+          </div>
+          <div class="cols c-6-4">
+            <div class="nbcard">
+              <div class="nbname">notebooks/01_SFINCS_wrapper.ipynb</div>
+              <ol>
+                <li>Look at the historical days and build the <b>LHS + hull + MDA</b> selection.</li>
+                <li>Plot the forcing of a few cases. Which lag did each case get?</li>
+                <li>Build the SFINCS model and <b>run the 100 cases</b> (a few minutes).</li>
+                <li>Compare the flood maps of the six situations.</li>
+                <li>Fit the <b>PCA</b>: how many components do you need?</li>
+              </ol>
+              <div class="callout warn small">No SFINCS on your machine? Set <code>run_sfincs = False</code>: the
+                notebook uses our results.</div>
+            </div>
+            <div class="stack">
+              <div class="clock">25′</div>
+              <p class="small muted">You should see:</p>
+              <div class="expect">SFINCS cases run: 100 of 100
+                8 PCs explain 99.91% of the variance</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =====================================================================
      4. NOTEBOOK 02
      ===================================================================== -->
-<section class="divider">
-  <div class="frame">
-    <div class="cols c-3-7" style="align-items:center">
-      <div class="num">02</div>
-      <div>
-        <div class="eyebrow">Notebook 02 · Surrogate</div>
-        <h1>A flood model in milliseconds</h1>
-        <p class="lede">An interpolator learns the 100 SFINCS runs and predicts the flood map of any day.</p>
-        <div class="learn"><span>radial basis functions</span><span>inverse PCA</span><span>k-fold cross-validation</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="divider">
+        <div class="frame">
+          <div class="cols c-3-7" style="align-items:center">
+            <div class="num">02</div>
+            <div>
+              <div class="eyebrow">Notebook 02 · Surrogate</div>
+              <h1>A flood model in milliseconds</h1>
+              <p class="lede">An interpolator learns the 100 SFINCS runs and predicts the flood map of any day.</p>
+              <div class="learn"><span>radial basis functions</span><span>inverse PCA</span><span>k-fold
+                  cross-validation</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">02</span> RBF</div>
-      <h2>Radial basis functions in one dimension</h2>
-    </div>
-    <div class="cols c-7-3">
-      <div data-demo="rbf-1d" class="fill"></div>
-      <div class="stack" style="justify-content:center;gap:.7em">
-        <p class="small">The prediction is a weighted sum of bumps centred at the training points, plus a linear trend:</p>
-        <math display="block"><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><mspace width="0.2em"/><msup><mi>e</mi><mrow><mo>−</mo><msup><mrow><mo>‖</mo><mi>x</mi><mo>−</mo><msub><mi>x</mi><mi>i</mi></msub><mo>‖</mo></mrow><mn>2</mn></msup><mo>/</mo><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow></msup><mo>+</mo><msub><mi>a</mi><mn>0</mn></msub><mo>+</mo><mi>a</mi><mo>·</mo><mi>x</mi></math>
-        <p class="small">The weights make <i>f</i> pass <b>exactly</b> through every training point. <b>σ</b> sets how far each point reaches.</p>
-        <p class="tiny muted">Click on the plot to add a training point. bluemath-tk optimises σ for each output.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">02</span> RBF</div>
+            <h2>Radial basis functions in one dimension</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="rbf-1d" class="fill"></div>
+            <div class="stack" style="justify-content:center;gap:.7em">
+              <p class="small">The prediction is a weighted sum of bumps centred at the training points, plus a linear
+                trend:</p>
+              <math display="block">
+                <mi>f</mi>
+                <mo>(</mo>
+                <mi>x</mi>
+                <mo>)</mo>
+                <mo>=</mo>
+                <munder>
+                  <mo>∑</mo>
+                  <mi>i</mi>
+                </munder>
+                <msub>
+                  <mi>w</mi>
+                  <mi>i</mi>
+                </msub>
+                <mspace width="0.2em" />
+                <msup>
+                  <mi>e</mi>
+                  <mrow>
+                    <mo>−</mo>
+                    <msup>
+                      <mrow>
+                        <mo>‖</mo>
+                        <mi>x</mi>
+                        <mo>−</mo>
+                        <msub>
+                          <mi>x</mi>
+                          <mi>i</mi>
+                        </msub>
+                        <mo>‖</mo>
+                      </mrow>
+                      <mn>2</mn>
+                    </msup>
+                    <mo>/</mo>
+                    <mn>2</mn>
+                    <msup>
+                      <mi>σ</mi>
+                      <mn>2</mn>
+                    </msup>
+                  </mrow>
+                </msup>
+                <mo>+</mo>
+                <msub>
+                  <mi>a</mi>
+                  <mn>0</mn>
+                </msub>
+                <mo>+</mo>
+                <mi>a</mi>
+                <mo>·</mo>
+                <mi>x</mi>
+              </math>
+              <p class="small">The weights make <i>f</i> pass <b>exactly</b> through every training point. <b>σ</b> sets
+                how far each point reaches.</p>
+              <p class="tiny muted">Click on the plot to add a training point. bluemath-tk optimises σ for each output.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">02</span> The surrogate</div>
-      <h2>From the forcing to a flood map</h2>
-    </div>
-    <div class="stack" style="justify-content:center;gap:1.4em">
-      <div class="pipeline" style="grid-template-columns:repeat(5,1fr)">
-        <div class="step"><span class="n">input</span><h3>3 numbers</h3><p><span class="sea">TWL</span>, <span class="river">Q</span>, <span class="rain">rain</span>, normalised to [0, 1]</p></div>
-        <div class="step"><span class="n">× 8 RBFs</span><h3>8 PCs</h3><p>One RBF per principal component, each with its own σ</p><span class="tk k-stats">RBF</span></div>
-        <div class="step"><span class="n">inverse PCA</span><h3>Water level</h3><p>mean + Σ PC<sub>k</sub> · EOF<sub>k</sub> on the 100 m grid</p><span class="tk k-stats">PCA</span></div>
-        <div class="step"><span class="n">subgrid downscaling</span><h3>Water depth</h3><p>max(level − DEM, 0) on the 20 m DEM</p><span class="tk k-model">hydromt-sfincs</span></div>
-        <div class="step"><span class="n">output</span><h3>Flood map</h3><p>In milliseconds, for any day</p></div>
-      </div>
-      <div class="cols c2">
-        <div class="card"><h3>Why water level, not depth?</h3><p class="small muted">The level is a smooth surface defined in every active cell: PCA and RBF handle it well. The DEM adds the sharp wet/dry edges afterwards.</p></div>
-        <div class="card"><h3>What the RBF cannot do</h3><p class="small muted">It interpolates between the 100 SFINCS days. Outside their range (bigger storms than ever simulated) it is not reliable.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">02</span> The surrogate</div>
+            <h2>From the forcing to a flood map</h2>
+          </div>
+          <div class="stack" style="justify-content:center;gap:1.4em">
+            <div class="pipeline" style="grid-template-columns:repeat(5,1fr)">
+              <div class="step"><span class="n">input</span>
+                <h3>3 numbers</h3>
+                <p><span class="sea">TWL</span>, <span class="river">Q</span>, <span class="rain">rain</span>,
+                  normalised to [0, 1]</p>
+              </div>
+              <div class="step"><span class="n">× 8 RBFs</span>
+                <h3>8 PCs</h3>
+                <p>One RBF per principal component, each with its own σ</p><span class="tk k-stats">RBF</span>
+              </div>
+              <div class="step"><span class="n">inverse PCA</span>
+                <h3>Water level</h3>
+                <p>mean + Σ PC<sub>k</sub> · EOF<sub>k</sub> on the 100 m grid</p><span class="tk k-stats">PCA</span>
+              </div>
+              <div class="step"><span class="n">subgrid downscaling</span>
+                <h3>Water depth</h3>
+                <p>max(level − DEM, 0) on the 20 m DEM</p><span class="tk k-model">hydromt-sfincs</span>
+              </div>
+              <div class="step"><span class="n">output</span>
+                <h3>Flood map</h3>
+                <p>In milliseconds, for any day</p>
+              </div>
+            </div>
+            <div class="cols c2">
+              <div class="card">
+                <h3>Why water level, not depth?</h3>
+                <p class="small muted">The level is a smooth surface defined in every active cell: PCA and RBF handle it
+                  well. The DEM adds the sharp wet/dry edges afterwards.</p>
+              </div>
+              <div class="card">
+                <h3>What the RBF cannot do</h3>
+                <p class="small muted">It interpolates between the 100 SFINCS days. Outside their range (bigger storms
+                  than ever simulated) it is not reliable.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">02</span> Live</div>
-      <h2>Your own flood, computed in this browser</h2>
-    </div>
-    <div data-demo="surrogate-live" class="fill"></div>
-  </div>
-  <aside class="notes">This is the actual RBF + PCA of notebook 02 (pretrained), reimplemented in JavaScript and checked against bluemath-tk. Try: high TWL alone, then high Q alone, then both. Then "Big river, no rain": each value is within the slider range, but the combination is outside the convex hull of the 100 SFINCS cases (in 3D), so the RBF extrapolates and the alert turns red. The 2D plots are projections, so a day can look inside both and still be outside in 3D.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">02</span> Live</div>
+            <h2>Your own flood, computed in this browser</h2>
+          </div>
+          <div data-demo="surrogate-live" class="fill"></div>
+        </div>
+        <aside class="notes">This is the actual RBF + PCA of notebook 02 (pretrained), reimplemented in JavaScript and
+          checked against bluemath-tk. Try: high TWL alone, then high Q alone, then both. Then "Big river, no rain":
+          each value is within the slider range, but the combination is outside the convex hull of the 100 SFINCS cases
+          (in 3D), so the RBF extrapolates and the alert turns red. The 2D plots are projections, so a day can look
+          inside both and still be outside in 3D.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">02</span> Validation</div>
-      <h2>How many SFINCS runs do we need?</h2>
-    </div>
-    <div data-demo="kfold" class="fill"></div>
-  </div>
-  <aside class="notes">5-fold: every case is predicted by an RBF that never saw it. With N training cases taken in MDA order. The error drops fast and flattens around 30–40 runs.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">02</span> Validation</div>
+            <h2>How many SFINCS runs do we need?</h2>
+          </div>
+          <div data-demo="kfold" class="fill"></div>
+        </div>
+        <aside class="notes">5-fold: every case is predicted by an RBF that never saw it. With N training cases taken in
+          MDA order. The error drops fast and flattens around 30–40 runs.</aside>
+      </section>
 
-<section class="hands-on">
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Hands-on · 10 min</div>
-      <h2>Your turn: notebook 02</h2>
-    </div>
-    <div class="cols c-6-4">
-      <div class="nbcard">
-        <div class="nbname">notebooks/02_Surrogate.ipynb</div>
-        <ol>
-          <li>Fit the <b>RBF</b> from the forcing to the 8 PCs.</li>
-          <li>Run the <b>5-fold cross-validation</b> and look at the error vs the number of SFINCS runs.</li>
-          <li>Compare SFINCS and RBF for the worst and the median case. Where does the surrogate fail?</li>
-          <li>Predict your own days: change <code>new_days</code>.</li>
-        </ol>
-        <div class="callout small">💬 How would you improve it? More runs, another kernel, fewer PCs…</div>
-      </div>
-      <div class="stack">
-        <div class="clock">10′</div>
-        <p class="small muted">Lost? <code>USE_PRETRAINED = True</code></p>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="hands-on">
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Hands-on · 10 min</div>
+            <h2>Your turn: notebook 02</h2>
+          </div>
+          <div class="cols c-6-4">
+            <div class="nbcard">
+              <div class="nbname">notebooks/02_Surrogate.ipynb</div>
+              <ol>
+                <li>Fit the <b>RBF</b> from the forcing to the 8 PCs.</li>
+                <li>Run the <b>5-fold cross-validation</b> and look at the error vs the number of SFINCS runs.</li>
+                <li>Compare SFINCS and RBF for the worst and the median case. Where does the surrogate fail?</li>
+                <li>Predict your own days: change <code>new_days</code>.</li>
+              </ol>
+              <div class="callout small">💬 How would you improve it? More runs, another kernel, fewer PCs…</div>
+            </div>
+            <div class="stack">
+              <div class="clock">10′</div>
+              <p class="small muted">Lost? <code>USE_PRETRAINED = True</code></p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- =====================================================================
+      <!-- =====================================================================
      5. NOTEBOOK 03
      ===================================================================== -->
-<section class="divider">
-  <div class="frame">
-    <div class="cols c-3-7" style="align-items:center">
-      <div class="num">03</div>
-      <div>
-        <div class="eyebrow">Notebook 03 · Climate emulator</div>
-        <h1>Hundreds of years of weather</h1>
-        <p class="lede">Ten years of data cannot tell us the 100-year flood. We simulate plausible days that keep the physics of the weather.</p>
-        <div class="learn"><span>daily weather types</span><span>Gaussian copulas</span><span>validation</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="divider">
+        <div class="frame">
+          <div class="cols c-3-7" style="align-items:center">
+            <div class="num">03</div>
+            <div>
+              <div class="eyebrow">Notebook 03 · Climate emulator</div>
+              <h1>Hundreds of years of weather</h1>
+              <p class="lede">Ten years of data cannot tell us the 100-year flood. We simulate plausible days that keep
+                the physics of the weather.</p>
+              <div class="learn"><span>daily weather types</span><span>Gaussian copulas</span><span>validation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">03</span> Why emulate</div>
-      <h2>From weather patterns to daily drivers</h2>
-    </div>
-    <div class="stack" style="justify-content:center;gap:1.3em">
-      <div class="pipeline" style="grid-template-columns:repeat(4,1fr)">
-        <div class="step fragment fade-up"><span class="n">yearly</span><h3>Annual weather types</h3><p>The large-scale ocean-climate state of each year</p><span class="tk k-stats">AWT</span></div>
-        <div class="step fragment fade-up"><span class="n">daily · given</span><h3>Daily weather types</h3><p>25 patterns of sea level pressure around Iberia, simulated day by day</p><span class="tk k-stats">KMA · ALR</span></div>
-        <div class="step fragment fade-up"><span class="n">daily · notebook 03</span><h3>One copula per type</h3><p>Rain, surge + setup and river discharge sampled <b>together</b></p><span class="tk k-stats">Gaussian copula</span></div>
-        <div class="step fragment fade-up"><span class="n">output</span><h3>3 × 100 years</h3><p>110,673 plausible days, with the right dependence</p></div>
-      </div>
-      <div class="callout fragment">The DWT series (<code>data/xds_output.nc</code>) is given. In notebook 03 you fit the copulas and simulate the drivers. The tide is added in notebook 04.</div>
-    </div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> Why emulate</div>
+            <h2>From weather patterns to daily drivers</h2>
+          </div>
+          <div class="stack" style="justify-content:center;gap:1.3em">
+            <div class="pipeline" style="grid-template-columns:repeat(4,1fr)">
+              <div class="step fragment fade-up"><span class="n">yearly</span>
+                <h3>Annual weather types</h3>
+                <p>The large-scale ocean-climate state of each year</p><span class="tk k-stats">AWT</span>
+              </div>
+              <div class="step fragment fade-up"><span class="n">daily · given</span>
+                <h3>Daily weather types</h3>
+                <p>25 patterns of sea level pressure around Iberia, simulated day by day</p><span class="tk k-stats">KMA
+                  · ALR</span>
+              </div>
+              <div class="step fragment fade-up"><span class="n">daily · notebook 03</span>
+                <h3>One copula per type</h3>
+                <p>Rain, surge + setup and river discharge sampled <b>together</b></p><span class="tk k-stats">Gaussian
+                  copula</span>
+              </div>
+              <div class="step fragment fade-up"><span class="n">output</span>
+                <h3>3 × 100 years</h3>
+                <p>110,673 plausible days, with the right dependence</p>
+              </div>
+            </div>
+            <div class="callout fragment">The DWT series (<code>data/xds_output.nc</code>) is given. In notebook 03 you
+              fit the copulas and simulate the drivers. The tide is added in notebook 04.</div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">03</span> Predictor</div>
-      <h2>25 daily weather types</h2>
-    </div>
-    <div data-demo="dwt" class="fill"></div>
-  </div>
-  <aside class="notes">KMA clustering of the daily atmospheric fields, 1979–2018. Shown: the mean pressure anomaly of each type. Click one: its typical rain, surge and river discharge.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> Predictor</div>
+            <h2>25 daily weather types</h2>
+          </div>
+          <div data-demo="dwt" class="fill"></div>
+        </div>
+        <aside class="notes">KMA clustering of the daily atmospheric fields, 1979–2018. Shown: the mean pressure anomaly
+          of each type. Click one: its typical rain, surge and river discharge.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">03</span> Copulas</div>
-      <h2>A Gaussian copula: dependence and marginals, separately</h2>
-    </div>
-    <div data-demo="copula" class="fill"></div>
-  </div>
-  <aside class="notes">Three steps: correlated normals → uniforms with the normal CDF → any marginal with its inverse CDF. The rank correlation survives every step.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> Copulas</div>
+            <h2>A Gaussian copula: dependence and marginals, separately</h2>
+          </div>
+          <div data-demo="copula" class="fill"></div>
+        </div>
+        <aside class="notes">Three steps: correlated normals → uniforms with the normal CDF → any marginal with its
+          inverse CDF. The rank correlation survives every step.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">03</span> Copulas</div>
-      <h2>One copula per weather type</h2>
-    </div>
-    <div data-demo="rho" class="fill"></div>
-  </div>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> Copulas</div>
+            <h2>One copula per weather type</h2>
+          </div>
+          <div data-demo="rho" class="fill"></div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">03</span> Output</div>
-      <h2>Synthetic weather, validated</h2>
-    </div>
-    <div data-demo="emulated" class="fill"></div>
-  </div>
-  <aside class="notes">Top: ten years of one simulation, coloured strip = the weather type of each day. Bottom: quantiles of the simulated vs observed days (QQ). On the diagonal = same distribution.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> Output</div>
+            <h2>Synthetic weather, validated</h2>
+          </div>
+          <div data-demo="emulated" class="fill"></div>
+        </div>
+        <aside class="notes">Top: ten years of one simulation, coloured strip = the weather type of each day. Bottom:
+          quantiles of the simulated vs observed days (QQ). On the diagonal = same distribution.</aside>
+      </section>
 
-<section class="hands-on">
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Hands-on · 10 min</div>
-      <h2>Your turn: notebook 03</h2>
-    </div>
-    <div class="cols c-6-4">
-      <div class="nbcard">
-        <div class="nbname">notebooks/03_Emulator.ipynb</div>
-        <ol>
-          <li>Load the <b>weather types</b> and join them with the daily drivers.</li>
-          <li>Fit one <b>Gaussian copula</b> per type and look at its correlations.</li>
-          <li>Simulate <b>3 × 100 years</b> from the simulated weather types.</li>
-          <li>Validate: histograms per type, scatter, QQ and annual maxima.</li>
-        </ol>
-        <div class="callout small">💬 Try the <code>ECDF</code> kernel instead of <code>KDE</code> for a variable: what happens to the extremes?</div>
-      </div>
-      <div class="stack">
-        <div class="clock">10′</div>
-        <p class="small muted">It writes <code>outputs/simulated_precip_ss_q.nc</code> for notebook 04.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="hands-on">
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Hands-on · 10 min</div>
+            <h2>Your turn: notebook 03</h2>
+          </div>
+          <div class="cols c-6-4">
+            <div class="nbcard">
+              <div class="nbname">notebooks/03_Emulator.ipynb</div>
+              <ol>
+                <li>Load the <b>weather types</b> and join them with the daily drivers.</li>
+                <li>Fit one <b>Gaussian copula</b> per type and look at its correlations.</li>
+                <li>Simulate <b>3 × 100 years</b> from the simulated weather types.</li>
+                <li>Validate: histograms per type, scatter, QQ and annual maxima.</li>
+              </ol>
+              <div class="callout small">💬 Try the <code>ECDF</code> kernel instead of <code>KDE</code> for a variable:
+                what happens to the extremes?</div>
+            </div>
+            <div class="stack">
+              <div class="clock">10′</div>
+              <p class="small muted">It writes <code>outputs/simulated_precip_ss_q.nc</code> for notebook 04.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- =====================================================================
+      <!-- =====================================================================
      6. NOTEBOOK 04
      ===================================================================== -->
-<section class="divider">
-  <div class="frame">
-    <div class="cols c-3-7" style="align-items:center">
-      <div class="num">04</div>
-      <div>
-        <div class="eyebrow">Notebook 04 · Flood climate</div>
-        <h1>300 years of floods in seconds</h1>
-        <p class="lede">The emulator gives the days, the surrogate gives the maps. Together: flood statistics.</p>
-        <div class="learn"><span>tide + surge</span><span>training range</span><span>return periods</span><span>compound drivers</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="divider">
+        <div class="frame">
+          <div class="cols c-3-7" style="align-items:center">
+            <div class="num">04</div>
+            <div>
+              <div class="eyebrow">Notebook 04 · Flood climate</div>
+              <h1>3 × 100 years of floods in seconds</h1>
+              <p class="lede">The emulator gives the days, the surrogate gives the maps. Together: flood statistics.</p>
+              <div class="learn"><span>tide + surge</span><span>training range</span><span>return
+                  periods</span><span>compound drivers</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">04</span> Total water level</div>
-      <h2>Adding the tide back</h2>
-    </div>
-    <div data-demo="tide" class="fill"></div>
-  </div>
-  <aside class="notes">The emulator only knows the weather part (surge + setup). The tide does not depend on the weather, so we add a random daily tide maximum from the record. Then we clip the days to the training range of the RBF.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">04</span> Total water level</div>
+            <h2>Adding the tide back</h2>
+          </div>
+          <div data-demo="tide" class="fill"></div>
+        </div>
+        <aside class="notes">The emulator only knows the weather part (surge + setup). The tide does not depend on the
+          weather, so we add a random daily tide maximum from the record. Then we clip the days to the training range of
+          the RBF.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">04</span> Statistics</div>
-      <h2>Return periods from 300 emulated years</h2>
-    </div>
-    <div data-demo="return-period" class="fill"></div>
-  </div>
-  <aside class="notes">Sort the annual maxima; the k-th largest of n years has a return period of (n+1)/k. With 300 years the 100-year level is read directly, no extreme-value fit needed.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">04</span> Statistics</div>
+            <h2>Return periods from 3 × 100 emulated years</h2>
+          </div>
+          <div data-demo="return-period" class="fill"></div>
+        </div>
+        <aside class="notes">Sort the annual maxima; the k-th largest of n years has a return period of (n+1)/k. With 3
+          × 100 = 300 years pooled, the 100-year level is read directly, no extreme-value fit needed.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">04</span> Maps</div>
-      <h2>The flood map of any return period</h2>
-    </div>
-    <div data-demo="flood-T" class="fill"></div>
-  </div>
-  <aside class="notes">Cell by cell: the quantile of the annual maximum water level, converted to depth on the DEM.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">04</span> Maps</div>
+            <h2>The flood map of any return period</h2>
+          </div>
+          <div data-demo="flood-T" class="fill"></div>
+        </div>
+        <aside class="notes">Cell by cell: the quantile of the annual maximum water level, converted to depth on the
+          DEM.</aside>
+      </section>
 
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow"><span class="nb">04</span> Compound flooding</div>
-      <h2>Two places, two different floods</h2>
-    </div>
-    <div data-demo="drivers" class="fill"></div>
-  </div>
-  <aside class="notes">Each coloured dot is the day that produced the annual maximum at that location. In the Asón valley they line up with high Q; in the western marshes with high TWL.</aside>
-</section>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">04</span> Compound flooding</div>
+            <h2>Two places, two different floods</h2>
+          </div>
+          <div data-demo="drivers" class="fill"></div>
+        </div>
+        <aside class="notes">Each coloured dot is the day that produced the annual maximum at that location. In the Asón
+          valley they line up with high Q; in the western marshes with high TWL.</aside>
+      </section>
 
-<section class="hands-on">
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Hands-on · 10 min</div>
-      <h2>Your turn: notebook 04</h2>
-    </div>
-    <div class="cols c-6-4">
-      <div class="nbcard">
-        <div class="nbname">notebooks/04_Flood_climate.ipynb</div>
-        <ol>
-          <li>Rebuild the <b>TWL</b> = tide + surge + setup of every emulated day.</li>
-          <li>Check how many days fall <b>outside the training range</b>.</li>
-          <li>Run the 110,673 days through the surrogate and get the <b>annual maxima</b>.</li>
-          <li>Plot the <b>return-period curves</b> and the 10- and 100-year maps.</li>
-          <li>Which driver makes the annual maximum at each location?</li>
-        </ol>
-      </div>
-      <div class="stack">
-        <div class="clock">10′</div>
-        <div class="callout small">💬 What limits the confidence in the 100-year level? What about the days above the training range?</div>
-      </div>
-    </div>
-  </div>
-</section>
+      <section class="hands-on">
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Hands-on · 10 min</div>
+            <h2>Your turn: notebook 04</h2>
+          </div>
+          <div class="cols c-6-4">
+            <div class="nbcard">
+              <div class="nbname">notebooks/04_Flood_climate.ipynb</div>
+              <ol>
+                <li>Rebuild the <b>TWL</b> = tide + surge + setup of every emulated day.</li>
+                <li>Check how many days fall <b>outside the training range</b>.</li>
+                <li>Run the 110,673 days through the surrogate and get the <b>annual maxima</b>.</li>
+                <li>Plot the <b>return-period curves</b> and the 10- and 100-year maps.</li>
+                <li>Which driver makes the annual maximum at each location?</li>
+              </ol>
+            </div>
+            <div class="stack">
+              <div class="clock">10′</div>
+              <div class="callout small">💬 What limits the confidence in the 100-year level? What about the days above
+                the training range?</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-<!-- =====================================================================
+      <!-- =====================================================================
      7. WRAP-UP
      ===================================================================== -->
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Wrap-up</div>
-      <h2>What we built today</h2>
-    </div>
-    <div class="stack" style="justify-content:center;gap:1.3em">
-      <div class="cols c4">
-        <div class="card"><div class="big-num" style="color:var(--accent)">100</div><p class="small muted">SFINCS runs, chosen with LHS + MDA</p></div>
-        <div class="card"><div class="big-num" style="color:var(--accent)">8</div><p class="small muted">principal components per flood map (99.9%)</p></div>
-        <div class="card"><div class="big-num" style="color:var(--accent)">110,673</div><p class="small muted">emulated days through the RBF surrogate</p></div>
-        <div class="card"><div class="big-num" style="color:var(--accent)">1:100</div><p class="small muted">year flood map, without fitting an extreme-value distribution</p></div>
-      </div>
-      <p class="lede" style="max-width:none">The same recipe works for waves (HySwash, HyBeat), cyclones (SHyTCWaves) or any expensive model: <b>simulate a few, learn them, emulate many</b>.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <div class="frame">
-    <div>
-      <div class="eyebrow">Discussion</div>
-      <h2>Where to be careful</h2>
-    </div>
-    <div class="cols c2" style="align-content:start">
-      <div class="card"><h3>The training range</h3><p class="small muted">The RBF interpolates. Emulated days above the simulated maxima are clipped, and the rarest floods are underestimated. Add SFINCS runs at the edges.</p></div>
-      <div class="card"><h3>Simplified forcing</h3><p class="small muted">One triangle, one hydrograph, uniform rain and a random lag per day: the timing of the drivers matters for compound floods.</p></div>
-      <div class="card"><h3>The emulator</h3><p class="small muted">300 years from 10 years of local data and 40 of weather types. The tide is drawn independently of the weather.</p></div>
-      <div class="card"><h3>A changing climate</h3><p class="small muted">Add sea level rise to the TWL, or drive the emulator with weather types from climate projections.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="title">
-  <div class="frame full">
-    <div class="cols c-6-4" style="align-items:center">
-      <div class="stack" style="gap:1.1em">
-        <div class="eyebrow">Thank you</div>
-        <h1>Start with one piece.</h1>
-        <p class="lede">Clone the repositories, pick a piece, and build something bigger on top of it.</p>
-        <div class="stack tight mono small">
-          <a href="https://github.com/GeoOcean/BlueMath_Course_InterJIA" target="_blank" rel="noopener">github.com/GeoOcean/BlueMath_Course_InterJIA</a>
-          <a href="https://github.com/GeoOcean/BlueMath_tk" target="_blank" rel="noopener">github.com/GeoOcean/BlueMath_tk</a>
-          <a href="https://github.com/GeoOcean/BlueMath" target="_blank" rel="noopener">github.com/GeoOcean/BlueMath</a>
-          <a href="https://github.com/Deltares/SFINCS" target="_blank" rel="noopener">github.com/Deltares/SFINCS</a>
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Wrap-up</div>
+            <h2>What we built today</h2>
+          </div>
+          <div class="stack" style="justify-content:center;gap:1.3em">
+            <div class="cols c4">
+              <div class="card">
+                <div class="big-num" style="color:var(--accent)">100</div>
+                <p class="small muted">SFINCS runs, chosen with LHS + MDA</p>
+              </div>
+              <div class="card">
+                <div class="big-num" style="color:var(--accent)">8</div>
+                <p class="small muted">principal components per flood map (99.9%)</p>
+              </div>
+              <div class="card">
+                <div class="big-num" style="color:var(--accent)">110,673</div>
+                <p class="small muted">emulated days through the RBF surrogate</p>
+              </div>
+              <div class="card">
+                <div class="big-num" style="color:var(--accent)">1:100</div>
+                <p class="small muted">year flood map, without fitting an extreme-value distribution</p>
+              </div>
+            </div>
+            <p class="lede" style="max-width:none">The same recipe works for waves (HySwash, HyBeat), cyclones
+              (SHyTCWaves) or any expensive model: <b>simulate a few, learn them, emulate many</b>.</p>
+          </div>
         </div>
-        <div class="logos" style="margin-top:.8em">
-          <img src="img/geoocean.png" alt="GeoOcean">
-          <img src="img/UC.png" alt="Universidad de Cantabria">
-          <img class="wide" src="img/interjia.png" alt="IAHR">
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow">Discussion</div>
+            <h2>Where to be careful</h2>
+          </div>
+          <div class="cols c2" style="align-content:start">
+            <div class="card">
+              <h3>The training range</h3>
+              <p class="small muted">The RBF interpolates. Emulated days above the simulated maxima are clipped, and the
+                rarest floods are underestimated. Add SFINCS runs at the edges.</p>
+            </div>
+            <div class="card">
+              <h3>Simplified forcing</h3>
+              <p class="small muted">One triangle, one hydrograph, uniform rain and a random lag per day: the timing of
+                the drivers matters for compound floods.</p>
+            </div>
+            <div class="card">
+              <h3>The emulator</h3>
+              <p class="small muted">3 × 100 years from 10 years of local data and 40 of weather types. The tide is
+                drawn independently of the weather.</p>
+            </div>
+            <div class="card">
+              <h3>A changing climate</h3>
+              <p class="small muted">Add sea level rise to the TWL, or drive the emulator with weather types from
+                climate projections.</p>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="stack" style="gap:1em">
-        <div class="card"><h3>Contribute to BlueMath</h3><p class="small muted">Develop code, use and test the methods on your coast, bring computing power, start a project, host a course. Open an issue or a pull request.</p></div>
-        <div class="card"><h3>Credits</h3><p class="small muted">BlueMath toolkit (GeoOcean): LHS, MDA, PCA, RBF and the climate emulator. SFINCS and HydroMT-SFINCS (Deltares). Licensed GPL-3.0.</p></div>
-      </div>
+      </section>
+
+      <section class="title">
+        <div class="frame full">
+          <div class="cols c-6-4" style="align-items:center">
+            <div class="stack" style="gap:1.1em">
+              <div class="eyebrow">Thank you</div>
+              <h1>Start with one piece.</h1>
+              <p class="lede">Clone the repositories, pick a piece, and build something bigger on top of it.</p>
+              <div class="stack tight mono small">
+                <a href="https://github.com/GeoOcean/BlueMath_Course_InterJIA" target="_blank"
+                  rel="noopener">github.com/GeoOcean/BlueMath_Course_InterJIA</a>
+                <a href="https://github.com/GeoOcean/BlueMath_tk" target="_blank"
+                  rel="noopener">github.com/GeoOcean/BlueMath_tk</a>
+                <a href="https://github.com/GeoOcean/BlueMath" target="_blank"
+                  rel="noopener">github.com/GeoOcean/BlueMath</a>
+                <a href="https://github.com/Deltares/SFINCS" target="_blank"
+                  rel="noopener">github.com/Deltares/SFINCS</a>
+              </div>
+              <div class="logos" style="margin-top:.8em">
+                <img src="img/geoocean.png" alt="GeoOcean">
+                <img src="img/UC.png" alt="Universidad de Cantabria">
+                <img class="wide" src="img/interjia.png" alt="IAHR">
+              </div>
+            </div>
+            <div class="stack" style="gap:1em">
+              <div class="card">
+                <h3>Contribute to BlueMath</h3>
+                <p class="small muted">Develop code, use and test the methods on your coast, bring computing power,
+                  start a project, host a course. Open an issue or a pull request.</p>
+              </div>
+              <div class="card">
+                <h3>Credits</h3>
+                <p class="small muted">BlueMath toolkit (GeoOcean): LHS, MDA, PCA, RBF and the climate emulator. SFINCS
+                  and HydroMT-SFINCS (Deltares). Licensed GPL-3.0.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </div>
+    <div class="deck-footer"><img src="img/geoocean.png" alt=""> HyDeCoFfEE · InterJIA 2026</div>
   </div>
-</section>
 
-</div>
-<div class="deck-footer"><img src="img/geoocean.png" alt=""> HySfincs · InterJIA 2026</div>
-</div>
-
-<script src="vendor/reveal/reveal.min.js"></script>
-<script src="vendor/reveal/notes.min.js"></script>
-<script src="vendor/plotly.min.js"></script>
-<script type="module" src="js/main.js"></script>
+  <script src="vendor/reveal/reveal.min.js"></script>
+  <script src="vendor/reveal/notes.min.js"></script>
+  <script src="vendor/plotly.min.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
+
 </html>

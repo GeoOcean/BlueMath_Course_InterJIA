@@ -96,8 +96,8 @@ def plot_pca_eofs_pcs(pca, dep_hr, var_to_predict, inputs, pairs=None, n_compone
 
 
 
-def plot_hysfincs_forcings(waterlevel_forcing, discharge_forcing, precipitation_forcing, reference_time, ncols=2, titles=None):
-    """Plot the TWL, river discharge and rainfall forcings of each HySfincs case."""
+def plot_forcings(waterlevel_forcing, discharge_forcing, precipitation_forcing, reference_time, ncols=2, titles=None):
+    """Plot the TWL, river discharge and rainfall forcings of each HyDeCoFfEE case."""
 
     n_cases = len(waterlevel_forcing)
     nrows = int(np.ceil(n_cases / ncols))

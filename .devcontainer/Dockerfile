@@ -1,4 +1,4 @@
-# Image of the InterJIA HySfincs course: SFINCS compiled from source + Python
+# Image of the InterJIA HyDeCoFfEE course: SFINCS compiled from source + Python
 # environment (bluemath-tk, hydromt-sfincs, Jupyter).
 #
 # Users do not build this: devcontainer.json pulls the prebuilt image. It is
