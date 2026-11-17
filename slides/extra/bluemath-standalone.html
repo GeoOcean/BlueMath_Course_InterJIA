@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>BlueMath Building Blocks</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: one narrow reading column per section; each section is a "stage" where bricks build up, bottom to top. */
+:root {
+  --bg: #F2F6F9;
+  --bg-2: #E4EDF3;
+  --fg: #0B2233;
+  --muted: #4B6274;
+  --line: #C3D3DF;
+  --plate: #B9CBD8;
+  --accent: #087DA6;
+  --k-data: #E8B94A;
+  --k-stats: #C892C5;
+  --k-model: #7DB3E3;
+  --k-domain: #93BD8B;
+  --k-method: #7FDBF8;
+  --k-service: #F5AE90;
+  --ink: #0A1A26;
+  --font-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #06131E; --bg-2: #0B1F2F; --fg: #E5EEF4; --muted: #8DA5B6;
+    --line: #1C374C; --plate: #17344A; --accent: #7FDBF8; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #06131E; --bg-2: #0B1F2F; --fg: #E5EEF4; --muted: #8DA5B6;
+  --line: #1C374C; --plate: #17344A; --accent: #7FDBF8; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
+}
+.wrap { max-width: 1120px; margin: 0 auto; }
+section { padding-block: 72px; border-top: 1px solid var(--line); }
+section:first-of-type { border-top: 0; padding-block: 40px 64px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+h1 { font-size: clamp(2.6rem, 6.4vw, 4.6rem); line-height: 0.98; font-weight: 800; }
+h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.05; font-weight: 700; }
+h3 { font-size: 1.25rem; font-weight: 700; }
+p { margin: 0; max-width: 62ch; }
+.eyebrow {
+  font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+}
+.lede { font-size: 1.15rem; color: var(--muted); }
+.head { display: grid; gap: 14px; margin-bottom: 40px; }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ---------- bricks ---------- */
+/* Oblique 3D brick: front face is the element, ::before is the studded top, ::after the shaded side. */
+.brick {
+  --kc: var(--k-stats);
+  --d: 8px;
+  --top: color-mix(in srgb, var(--kc) 72%, white);
+  --stud: color-mix(in srgb, var(--kc) 50%, white);
+  --side: color-mix(in srgb, var(--kc) 70%, black);
+  position: relative; background: var(--kc); color: var(--ink);
+  border-radius: 1px;
+  background-image: linear-gradient(180deg, rgb(255 255 255 / .18), transparent 30%, rgb(0 0 0 / .08));
+  font-family: var(--font-mono); font-weight: 600;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  line-height: 1.1;
+}
+.brick::before {
+  content: ""; position: absolute; left: 0; bottom: 100%; width: 100%; height: var(--d);
+  transform-origin: 0 100%; transform: skewX(-45deg);
+  background: var(--top);
+  pointer-events: none;
+}
+/* Studs: a row of raised cylinders along the middle of the top face (base ellipse, shaded body, lit cap). */
+.studs {
+  --t: calc(var(--d) * 2.1);
+  --rx: calc(var(--d) * .62);
+  --ry: calc(var(--d) * .26);
+  --ch: calc(var(--d) * .6);
+  position: absolute; pointer-events: none;
+  left: calc(var(--d) * .5); right: calc(var(--d) * -.5);
+  bottom: calc(100% + var(--d) * .5 - var(--ry));
+  height: calc(var(--ch) + var(--ry) * 2);
+  padding-inline: calc(var(--d) * .15);
+  background-origin: content-box; background-clip: content-box;
+  background:
+    radial-gradient(var(--rx) var(--ry) at 50% var(--ry), var(--stud) 88%, var(--top) 96%, transparent 100%) 0 0 / var(--t) 100% space no-repeat,
+    linear-gradient(90deg, transparent calc(50% - var(--rx)), var(--top) calc(50% - var(--rx)), var(--kc) 45%, var(--side) calc(50% + var(--rx)), transparent calc(50% + var(--rx))) 0 var(--ry) / var(--t) var(--ch) space no-repeat,
+    radial-gradient(var(--rx) var(--ry) at 50% calc(var(--ch) + var(--ry)), var(--side) 92%, transparent 100%) 0 0 / var(--t) 100% space no-repeat;
+  background-origin: content-box;
+}
+.brick::after {
+  content: ""; position: absolute; left: 100%; top: 0; width: var(--d); height: 100%;
+  transform-origin: 0 0; transform: skewY(-45deg);
+  background: var(--side); pointer-events: none;
+}
+.k-data { --kc: var(--k-data); }
+.k-stats { --kc: var(--k-stats); }
+.k-model { --kc: var(--k-model); }
+.k-domain { --kc: var(--k-domain); }
+.k-method { --kc: var(--k-method); }
+.k-service { --kc: var(--k-service); }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 48px; align-items: center; }
+.hero-copy { display: grid; gap: 22px; min-width: 0; }
+.hero-copy h1 em { font-style: normal; color: var(--accent); }
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 6px;
+  font-weight: 600; text-decoration: none; border: 1px solid var(--line); cursor: pointer; background: transparent;
+}
+.btn.primary { background: var(--k-method); color: var(--ink); border-color: transparent; }
+.btn:hover { border-color: var(--accent); }
+
+.stage-wrap { min-width: 0; }
+.stage {
+  position: relative; width: 100%; aspect-ratio: 5 / 4; max-width: 100%;
+  container-type: inline-size;
+}
+.stage .brick { position: absolute; --d: 1.9cqw; transform-origin: 50% 100%; }
+.stage .brick span { font-size: clamp(8px, 2.05cqw, 15px); padding: 0 3px; }
+.stage .k-method span { font-size: clamp(10px, 2.9cqw, 20px); font-family: var(--font-display); font-weight: 700; }
+.stage .k-service span { font-size: clamp(11px, 3.2cqw, 22px); font-family: var(--font-display); font-weight: 800; }
+.stage .plate {
+  --kc: var(--plate); --d: 4cqw;
+  --top: color-mix(in srgb, var(--plate) 85%, white);
+  --stud: color-mix(in srgb, var(--plate) 70%, white);
+  --side: color-mix(in srgb, var(--plate) 70%, black);
+  left: 0; width: 78%; bottom: 0; height: 4%; z-index: 0;
+}
+.stage .plate .studs { --d: 1.9cqw; bottom: calc(100% + 2cqw - var(--ry)); left: 2cqw; right: -2cqw; }
+.row-label {
+  position: absolute; left: 82%; right: 0; font-family: var(--font-mono);
+  font-size: clamp(9px, 1.8cqw, 13px); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+  display: flex; align-items: center; gap: 6px; line-height: 1.15;
+}
+.row-label::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--kc); flex: none; }
+.ghost {
+  position: absolute; border: 2px dashed var(--accent); border-radius: 4px; color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-weight: 600; font-size: clamp(9px, 2.1cqw, 14px);
+  text-decoration: none; background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+.ghost:hover { background: color-mix(in srgb, var(--accent) 18%, transparent); }
+.bob { animation: bob 2.4s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-6px); } }
+.stage-caption {
+  margin-top: 18px; display: flex; justify-content: space-between; gap: 12px; align-items: baseline;
+  font-family: var(--font-mono); font-size: 0.82rem; color: var(--muted); flex-wrap: wrap;
+}
+.stage-caption b { color: var(--fg); font-weight: 600; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); cursor: pointer; font-family: var(--font-mono); font-size: 0.82rem; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- why ---------- */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.stat { padding: 26px 24px 8px 0; display: grid; gap: 8px; align-content: start; }
+.stat + .stat { padding-left: 24px; border-left: 1px solid var(--line); }
+.stat .num { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 7vw, 5rem); line-height: 1; font-variant-numeric: tabular-nums; }
+.stat .src { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+.why-close { margin-top: 36px; font-size: 1.15rem; max-width: 60ch; }
+
+/* ---------- how (steps) ---------- */
+.how { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 40px; align-items: start; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; counter-reset: s; }
+.steps li {
+  padding: 16px 18px; border-radius: 6px; display: grid; grid-template-columns: 2.2em 1fr; gap: 4px 12px;
+  border: 1px solid transparent; transition: background .3s, border-color .3s;
+}
+.steps li::before { counter-increment: s; content: counter(s); grid-row: span 2; font-family: var(--font-display); font-weight: 800; font-size: 1.8rem; line-height: 1; color: var(--muted); }
+.steps li.on { background: var(--bg-2); border-color: var(--line); }
+.steps li.on::before { color: var(--accent); }
+.steps li p { color: var(--muted); font-size: 0.95rem; }
+.sort-stage { position: relative; min-width: 0; background: var(--bg-2); border: 1px solid var(--line); border-radius: 8px; padding: 22px; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 22px; }
+.papers { display: flex; flex-direction: column; gap: 7px; }
+.paper {
+  font-family: var(--font-mono); font-size: 0.74rem; padding: 6px 9px; border-radius: 4px;
+  background: var(--bg); border: 1px solid var(--line); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.paper.lit { color: var(--fg); border-color: var(--accent); }
+.shelves { display: grid; gap: 14px; position: relative; padding: 14px; border-radius: 6px; border: 2px dashed transparent; transition: border-color .5s, background .5s; align-content: start; }
+.shelves.packed { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.shelf { display: grid; gap: 6px; }
+.shelf-name { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.shelf-bricks { display: flex; flex-wrap: wrap; gap: 12px 6px; min-height: 26px; padding-top: 10px; border-bottom: 3px solid var(--plate); padding-bottom: 3px; }
+.mini { width: 28px; height: 14px; --d: 5px; }
+.repo-tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); opacity: 0; transition: opacity .5s; text-align: right; }
+.shelves.packed .repo-tag { opacity: 1; }
+.flyer { position: absolute; z-index: 5; pointer-events: none; }
+
+/* ---------- explorer ---------- */
+.explorer { position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 0; }
+.wires path { fill: none; stroke: var(--accent); stroke-width: 1.5; opacity: .75; }
+.col { position: relative; z-index: 1; display: grid; gap: 18px; align-content: start; min-width: 0; }
+.col-head { display: flex; align-items: center; gap: 10px; }
+.col-head .sw { width: 14px; height: 14px; border-radius: 3px; background: var(--kc); }
+.col-head h3 { font-size: 1.1rem; }
+.col-head small { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-left: auto; }
+.group { display: grid; gap: 10px; }
+.group-name { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 18px 11px; padding-top: 12px; }
+.chip { --d: 7px; font-size: 0.74rem; padding: 7px 9px; transition: opacity .35s, transform .35s, filter .35s; }
+.chip.dim { opacity: .28; filter: saturate(.4); }
+.chip.on { transform: translateY(-3px); }
+.pick {
+  --d: 10px; width: calc(100% - 10px); padding: 14px 12px; cursor: pointer; border: 0; justify-content: flex-start; text-align: left;
+  flex-direction: column; align-items: flex-start; gap: 2px; transition: opacity .35s, transform .35s, filter .35s;
+}
+.pick b { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; }
+.pick small { font-family: var(--font-body); font-weight: 400; font-size: 0.76rem; opacity: .8; }
+.pick.dim { opacity: .35; filter: saturate(.4); }
+.pick.on { transform: translateY(-6px); box-shadow: 0 8px 0 -2px rgb(0 0 0 / .25); }
+.pick.on b { text-decoration: underline; text-underline-offset: 3px; }
+.picks { display: grid; gap: 24px; padding-top: 16px; }
+.readout {
+  margin-top: 40px; padding: 22px 24px; border-radius: 8px; background: var(--bg-2); border: 1px solid var(--line);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 24px; align-items: start;
+}
+.readout h3 { font-size: 1.5rem; }
+.readout .ref { font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.readout p { color: var(--muted); grid-column: 1; }
+.readout .count { grid-row: 1 / span 3; grid-column: 2; text-align: right; font-family: var(--font-mono); font-size: 0.78rem; color: var(--muted); }
+.readout .count b { display: block; font-family: var(--font-display); font-size: 2.6rem; color: var(--fg); line-height: 1; }
+.auto-note { margin-top: 12px; font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+
+/* ---------- TC example ---------- */
+.tc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.cone { width: 100%; height: auto; display: block; }
+.cone .land { fill: var(--bg-2); stroke: var(--line); }
+.cone .unc { fill: color-mix(in srgb, var(--k-service) 22%, transparent); stroke: var(--k-service); stroke-dasharray: 4 4; }
+.cone .trk { fill: none; stroke: var(--k-method); stroke-width: 1.6; opacity: .85; }
+.cone .main { stroke: var(--fg); stroke-width: 2.4; opacity: 1; }
+.cone text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+.tower { display: flex; flex-direction: column-reverse; gap: 0; padding-top: 30px; }
+.tier { display: grid; grid-template-columns: minmax(0, 11rem) 1.6rem minmax(0, 1fr); align-items: center; gap: 0 22px; position: relative; }
+.tier:nth-child(1) { z-index: 1; } .tier:nth-child(2) { z-index: 2; } .tier:nth-child(3) { z-index: 3; }
+.tier:nth-child(4) { z-index: 4; } .tier:nth-child(5) { z-index: 5; }
+.tier .brick { --d: 16px; height: 56px; flex-direction: column; gap: 1px; transform-origin: 50% 100%; }
+.tier .brick b { font-family: var(--font-display); font-size: 1rem; }
+.tier .brick small { font-family: var(--font-mono); font-size: 0.62rem; font-weight: 500; opacity: .8; }
+.tier .arrow { color: var(--muted); text-align: center; font-family: var(--font-mono); }
+.tier .out { font-size: 0.95rem; }
+.tier .out span { display: block; font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); }
+.tc-foot { margin-top: 18px; display: flex; gap: 16px; align-items: baseline; flex-wrap: wrap; }
+
+/* ---------- contribute ---------- */
+.ways { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px 26px; padding-top: 24px; padding-right: 12px; }
+.way { --d: 14px; padding: 18px 16px 16px; flex-direction: column; align-items: flex-start; justify-content: flex-start; text-align: left; gap: 6px; min-height: 130px; transition: transform .25s; }
+.way:hover { transform: translateY(-5px); }
+.way b { font-family: var(--font-display); font-size: 1.15rem; }
+.way span { font-family: var(--font-body); font-weight: 400; font-size: 0.88rem; }
+.way.open { background: transparent; border: 2px dashed var(--accent); box-shadow: none; color: var(--accent); text-decoration: none; }
+.way.open::before, .way.open::after { display: none; }
+
+.final { text-align: left; display: grid; gap: 20px; justify-items: start; padding-block: 24px 40px; }
+footer { padding-block: 28px 48px; border-top: 1px solid var(--line); font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+
+@media (max-width: 860px) {
+  .hero, .how, .tc { grid-template-columns: minmax(0, 1fr); }
+  .explorer { grid-template-columns: minmax(0, 1fr); gap: 44px; }
+  .sort-stage { grid-template-columns: minmax(0, 1fr); }
+  .papers { flex-direction: row; flex-wrap: wrap; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16px; }
+  section { padding-block: 52px; }
+  .stats { grid-template-columns: minmax(0, 1fr); }
+  .stat + .stat { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  .tier { grid-template-columns: minmax(0, 8.5rem) 1.2rem minmax(0, 1fr); }
+  .readout { grid-template-columns: minmax(0, 1fr); }
+  .readout .count { grid-row: auto; grid-column: 1; text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bob { animation: none; }
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<section>
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">BlueMath · GeoOcean, Universidad de Cantabria</div>
+      <h1>Small pieces.<br><em>Bigger</em> ocean science.</h1>
+      <p class="lede">BlueMath is an open-source Python framework for the statistical analysis and simulation of coastal climate hazards. We broke years of research into small, reusable pieces, and anyone can snap them together into methods and climate services.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="https://github.com/GeoOcean/BlueMath" target="_blank" rel="noopener">Open the repository</a>
+        <a class="btn" href="#contribute">Add your piece</a>
+      </div>
+    </div>
+    <div class="stage-wrap">
+      <div class="stage" id="hero-stage" aria-label="Animation: toolkit bricks are laid down, methods are built on top of them, and a climate service is built on top of the methods">
+        <div class="brick plate"></div>
+      </div>
+      <div class="stage-caption">
+        <span id="hero-cap"><b>Climate service</b> built on methods, built on toolkit pieces</span>
+        <button class="linkbtn" id="hero-replay" type="button">Replay</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY ============ -->
+<section id="why">
+  <div class="head">
+    <div class="eyebrow">Why we built it</div>
+    <h2>Most coastal research is hard to reuse.</h2>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="num" data-count="70">70%</div><p>of researchers failed to reproduce someone else's published research.</p><div class="src">Baker, 2016</div></div>
+    <div class="stat"><div class="num" data-count="50" data-prefix=">">&gt;50%</div><p>failed to reproduce their own experiments.</p><div class="src">Baker, 2016</div></div>
+    <div class="stat"><div class="num" data-count="11">11%</div><p>of the analyzed papers provided their code.</p><div class="src">Jansen et al., 2020</div></div>
+  </div>
+  <p class="why-close">Research slows down when every new method has to be rebuilt from scratch before it fits into an existing workflow. BlueMath turns that work into shared pieces that are written once, tested, and reused.</p>
+</section>
+
+<!-- ============ HOW ============ -->
+<section id="how">
+  <div class="head">
+    <div class="eyebrow">How it came together</div>
+    <h2>From papers to pieces to a shared repository.</h2>
+  </div>
+  <div class="how">
+    <ol class="steps" id="steps">
+      <li><h3>Identify the pieces</h3><p>We went back through a decade of GeoOcean projects and publications and found the same building blocks again and again: clustering, case selection, interpolation, model runs.</p></li>
+      <li><h3>Organize them</h3><p>Each piece was cleaned up and sorted by what it does: data handling, statistics and machine learning, numerical model wrappers, and coastal domain tools.</p></li>
+      <li class="on"><h3>Open the repository</h3><p>The pieces live together in one open-source Python repository, with the methods and services built from them.</p></li>
+    </ol>
+    <div class="sort-stage" id="sort-stage">
+      <div class="papers" id="papers"></div>
+      <div class="shelves packed" id="shelves">
+        <div class="shelf"><div class="shelf-name">Data handling</div><div class="shelf-bricks" data-k="data"></div></div>
+        <div class="shelf"><div class="shelf-name">Statistics &amp; ML</div><div class="shelf-bricks" data-k="stats"></div></div>
+        <div class="shelf"><div class="shelf-name">Numerical model wrappers</div><div class="shelf-bricks" data-k="model"></div></div>
+        <div class="shelf"><div class="shelf-name">Coastal domain tools</div><div class="shelf-bricks" data-k="domain"></div></div>
+        <div class="repo-tag">github.com/GeoOcean/BlueMath</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LAYERS / EXPLORER ============ -->
+<section id="layers">
+  <div class="head">
+    <div class="eyebrow">Three layers</div>
+    <h2>Pieces snap into methods. Methods stack into services.</h2>
+    <p class="lede">Pick a method or a climate service to see which pieces it is built from.</p>
+  </div>
+  <div class="explorer" id="explorer">
+    <svg class="wires" id="wires" aria-hidden="true"></svg>
+    <div class="col" id="col-tk">
+      <div class="col-head"><span class="sw k-data"></span><h3>Toolkit</h3><small>single pieces</small></div>
+    </div>
+    <div class="col" id="col-m">
+      <div class="col-head"><span class="sw k-method"></span><h3>Methods</h3><small>pieces combined</small></div>
+      <div class="picks" id="picks-m"></div>
+    </div>
+    <div class="col" id="col-s">
+      <div class="col-head"><span class="sw k-service"></span><h3>Climate services</h3><small>methods stacked</small></div>
+      <div class="picks" id="picks-s"></div>
+    </div>
+  </div>
+  <div class="readout" id="readout" aria-live="polite"></div>
+  <div class="auto-note" id="auto-note">Cycling through examples. Pick one to stop.</div>
+</section>
+
+<!-- ============ TC EXAMPLE ============ -->
+<section id="tc">
+  <div class="head">
+    <div class="eyebrow">A real build</div>
+    <h2>Tropical cyclone forecast system</h2>
+    <p class="lede">Four methods stacked on a forecast track. Each layer takes the output of the one below and adds detail, from the storm's path down to flooding at the shoreline.</p>
+  </div>
+  <div class="tc">
+    <svg class="cone" viewBox="0 0 420 300" role="img" aria-label="A forecast track with its uncertainty cone and ensemble of possible tracks approaching a coastline">
+      <path class="land" d="M300 0 C 285 60, 330 90, 305 150 S 340 240, 320 300 L 420 300 L 420 0 Z"/>
+      <path class="unc" d="M40 250 L 330 70 L 345 190 Z"/>
+      <g id="tracks">
+        <path class="trk" d="M40 250 C 140 200, 230 150, 334 95"/>
+        <path class="trk" d="M40 250 C 150 210, 240 170, 338 125"/>
+        <path class="trk" d="M40 250 C 150 220, 250 200, 340 172"/>
+        <path class="trk" d="M40 250 C 140 215, 245 185, 336 150"/>
+        <path class="trk main" d="M40 250 C 150 210, 240 170, 337 138"/>
+      </g>
+      <circle cx="40" cy="250" r="5" fill="var(--fg)"/>
+      <text x="48" y="272">forecast position</text>
+      <text x="150" y="98">uncertainty cone</text>
+    </svg>
+    <div>
+      <div class="tower" id="tower">
+        <div class="tier"><div class="brick k-data"><b>Forecast data</b><small>toolkit · downloader</small></div><div class="arrow">→</div><div class="out">Track information<span>storm path, intensity, size</span></div></div>
+        <div class="tier"><div class="brick k-method"><b>SHyTCWaves</b><small>van Vloten et al., 2024</small></div><div class="arrow">→</div><div class="out">Regional waves<span>waves generated along the track</span></div></div>
+        <div class="tier"><div class="brick k-method"><b>BinWaves</b><small>Cagigal et al., 2024</small></div><div class="arrow">→</div><div class="out">High-resolution waves<span>nearshore wave spectra</span></div></div>
+        <div class="tier"><div class="brick k-method"><b>HyBeat</b><small>Zornoza et al., 2024</small></div><div class="arrow">→</div><div class="out">Wave runup<span>water reaching the beach</span></div></div>
+        <div class="tier"><div class="brick k-method"><b>HyFlood</b><small>compound flooding</small></div><div class="arrow">→</div><div class="out">Flooding<span>where the water goes on land</span></div></div>
+      </div>
+      <div class="tc-foot"><button class="linkbtn" id="tc-replay" type="button">Build it again</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTRIBUTE ============ -->
+<section id="contribute">
+  <div class="head">
+    <div class="eyebrow">Contribute</div>
+    <h2>There is more than one way to add a piece.</h2>
+    <p class="lede">BlueMath grows with every contribution, and not all of them are code. Researchers, students, engineers and institutions already build with us.</p>
+  </div>
+  <div class="ways">
+    <div class="brick way k-stats"><b>Develop code</b><span>Turn a method from your own research into a tested, documented piece.</span></div>
+    <div class="brick way k-model"><b>Use and test</b><span>Run the methods on your coast, report what breaks, and share examples.</span></div>
+    <div class="brick way k-data"><b>Computing power</b><span>Bring HPC and supercomputer time to run large ensembles of simulations.</span></div>
+    <div class="brick way k-domain"><b>Projects</b><span>Start a BlueMath project at your institution, or join an ongoing one.</span></div>
+    <div class="brick way k-service"><b>Host a course</b><span>Hands-on courses on climate emulation and hybrid modelling.</span></div>
+    <a class="brick way open" href="https://github.com/GeoOcean/BlueMath" target="_blank" rel="noopener"><b>+ Your idea</b><span>Open an issue or a pull request on GitHub and tell us what you would build.</span></a>
+  </div>
+</section>
+
+<section>
+  <div class="final">
+    <h2>Start with one piece.</h2>
+    <p class="lede">Clone the repository, pick a piece, and build something bigger on top of it.</p>
+    <a class="btn primary" href="https://github.com/GeoOcean/BlueMath" target="_blank" rel="noopener">github.com/GeoOcean/BlueMath</a>
+  </div>
+</section>
+
+<footer>BlueMath · Geomatics and Ocean Engineering Group (GeoOcean), Universidad de Cantabria, with collaborators worldwide.</footer>
+</div>
+
+<script>
+(() => {
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const addStuds = b => { if (!b.querySelector(':scope > .studs')) b.append(el('i', 'studs')); return b; };
+const onView = (node, fn, threshold = 0.35) => {
+  if (!('IntersectionObserver' in window)) return;
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { io.disconnect(); fn(); } }), { threshold });
+  io.observe(node);
+};
+
+/* ================= HERO BUILD ================= */
+const stage = document.getElementById('hero-stage');
+const cap = document.getElementById('hero-cap');
+const L0 = 1.5, CW = 9.4;                     // stage %: left start, column width
+const ROWS = [{ b: 4, h: 13 }, { b: 17, h: 14 }, { b: 31, h: 15 }];   // rows sit flush on each other
+const tk = [
+  ['SWASH', 'model'], ['RBF', 'stats'], ['MDA', 'stats'], ['LHS', 'stats'],
+  ['GP', 'stats'], ['SFINCS', 'model'], ['Super-Point', 'domain'], ['SWAN', 'model'],
+];
+const ms = [['HySwash', 0, 3], ['HyFlood', 3, 3], ['BinWaves', 6, 2]];
+const place = (node, row, col, span) => {
+  const r = ROWS[row];
+  Object.assign(node.style, { left: (L0 + col * CW + 0.15) + '%', width: (span * CW - 0.3) + '%', bottom: r.b + '%', height: r.h + '%' });
+  node.style.zIndex = (row + 1) * 20 + col;   // upper rows cover the tops below; right neighbours cover side faces
+};
+const heroTk = tk.map(([n, k], i) => { const b = el('div', 'brick k-' + k, '<span>' + n + '</span>'); place(b, 0, i, 1); stage.append(b); return b; });
+const heroM = ms.map(([n, c, s]) => { const b = el('div', 'brick k-method', '<span>' + n + '</span>'); place(b, 1, c, s); b.dataset.c = c; b.dataset.s = s; stage.append(b); return b; });
+const heroS = el('div', 'brick k-service', '<span>Coastal flood forecast</span>'); place(heroS, 2, 0, 8); stage.append(heroS);
+const labels = ['Toolkit', 'Methods', 'Climate services'].map((t, i) => {
+  const l = el('div', 'row-label', t); l.style.setProperty('--kc', ['var(--k-stats)', 'var(--k-method)', 'var(--k-service)'][i]);
+  l.style.bottom = ROWS[i].b + '%'; l.style.height = ROWS[i].h + '%'; stage.append(l); return l;
+});
+const ghost = el('a', 'ghost bob', '+ your method'); ghost.href = '#contribute';
+Object.assign(ghost.style, { left: (L0 + 5 * CW + 0.3) + '%', width: (3 * CW - 0.6) + '%', bottom: '62%', height: '13%' });
+stage.append(ghost);
+const all = [...heroTk, ...heroM, heroS, ...labels, ghost];
+
+const drop = (node, delay = 0) => {
+  node.style.opacity = 1;
+  const h = stage.clientHeight * 0.55;
+  return node.animate(LAND(h), { duration: 700, delay, easing: 'cubic-bezier(.35,.7,.4,1)', fill: 'backwards' }).finished;
+};
+// fall, squash on impact, settle: reads as a brick clicking into place
+function LAND(h) {
+  return [
+    { transform: `translateY(${-h}px)`, opacity: 0 },
+    { transform: 'translateY(0) scale(1, 1)', opacity: 1, offset: 0.62 },
+    { transform: 'translateY(0) scale(1.04, .88)', offset: 0.74 },
+    { transform: 'translateY(-4px) scale(.99, 1.02)', offset: 0.87 },
+    { transform: 'translateY(0) scale(1, 1)' },
+  ];
+}
+const flash = nodes => nodes.forEach(n => n.animate(
+  [{ filter: 'brightness(1)' }, { filter: 'brightness(1.35)' }, { filter: 'brightness(1)' }], { duration: 500 }));
+const fadeIn = n => { n.style.opacity = 1; return n.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400 }).finished; };
+
+let runId = 0;
+async function heroRun() {
+  const id = ++runId;
+  const alive = () => id === runId;
+  if (reduce) { all.forEach(n => n.style.opacity = 1); return; }
+  while (alive()) {
+    all.forEach(n => { n.getAnimations().forEach(a => a.cancel()); n.style.opacity = 0; });
+    ghost.classList.add('bob');
+    cap.innerHTML = '<b>Toolkit</b> · single, tested pieces';
+    await wait(300); if (!alive()) return;
+    await Promise.all(heroTk.map((b, i) => drop(b, i * 150))); if (!alive()) return;
+    await fadeIn(labels[0]); await wait(500); if (!alive()) return;
+    cap.innerHTML = '<b>Methods</b> · pieces snapped together';
+    for (const m of heroM) {
+      await drop(m); if (!alive()) return;
+      flash(heroTk.slice(+m.dataset.c, +m.dataset.c + +m.dataset.s));
+      await wait(220);
+    }
+    await fadeIn(labels[1]); await wait(500); if (!alive()) return;
+    cap.innerHTML = '<b>Climate service</b> · methods stacked into a tool people use';
+    await drop(heroS); if (!alive()) return;
+    flash([...heroM, ...heroTk]);
+    await fadeIn(labels[2]); await wait(700); if (!alive()) return;
+    cap.innerHTML = '<b>Open</b> · there is room for your piece';
+    await fadeIn(ghost);
+    await wait(5200); if (!alive()) return;
+    await Promise.all(all.map(n => n.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, fill: 'forwards' }).finished));
+    await wait(250);
+  }
+}
+heroRun();
+document.getElementById('hero-replay').addEventListener('click', heroRun);
+
+/* ================= STATS COUNT-UP ================= */
+document.querySelectorAll('[data-count]').forEach(n => {
+  if (reduce) return;
+  onView(n, () => {
+    const to = +n.dataset.count, pre = n.dataset.prefix || '', t0 = performance.now(), d = 1300;
+    const tick = t => { const p = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - p, 3);
+      n.textContent = pre + Math.round(to * e) + '%'; if (p < 1) requestAnimationFrame(tick); };
+    requestAnimationFrame(tick);
+  }, 0.6);
+});
+
+/* ================= PAPERS → SHELVES ================= */
+const PAPERS = [
+  ['Perez et al., 2015', ['stats', 'domain']], ['Cid et al., 2016', ['data', 'stats']],
+  ['Rueda et al., 2017', ['stats', 'stats']], ['Cagigal et al., 2019', ['stats', 'domain']],
+  ['Anderson et al., 2019', ['stats', 'data']], ['Anderson et al., 2021', ['stats', 'model']],
+  ['Ricondo et al., 2023', ['model', 'stats']], ['van Vloten et al., 2023', ['model', 'domain']],
+  ['Ricondo et al., 2024', ['model', 'stats']], ['Cagigal et al., 2024', ['model', 'domain', 'data']],
+];
+const papersBox = document.getElementById('papers');
+const shelves = document.getElementById('shelves');
+const sortStage = document.getElementById('sort-stage');
+const stepsLi = [...document.querySelectorAll('#steps li')];
+const pieces = [];
+PAPERS.forEach(([name, ks]) => {
+  const p = el('div', 'paper', name); papersBox.append(p);
+  ks.forEach(k => { const m = el('div', 'brick mini k-' + k); shelves.querySelector(`[data-k="${k}"]`).append(m); pieces.push({ p, m }); });
+});
+const setStep = i => stepsLi.forEach((li, j) => li.classList.toggle('on', i === j));
+let sortId = 0;
+async function sortRun() {
+  if (reduce) return;
+  const id = ++sortId, alive = () => id === sortId;
+  sortStage.querySelectorAll('.flyer').forEach(f => f.remove());
+  shelves.classList.remove('packed');
+  pieces.forEach(({ m, p }) => { m.style.visibility = 'hidden'; p.classList.remove('lit'); });
+  setStep(0);
+  await wait(500);
+  const base = sortStage.getBoundingClientRect();
+  const order = pieces.map((x, i) => i).sort(() => Math.random() - .5);
+  for (const [n, i] of order.entries()) {
+    if (!alive()) return;
+    const { p, m } = pieces[i];
+    p.classList.add('lit');
+    if (n === 6) setStep(1);
+    const a = p.getBoundingClientRect(), b = m.getBoundingClientRect();
+    const f = addStuds(el('div', 'brick mini flyer ' + [...m.classList].find(c => c.startsWith('k-'))));
+    f.style.left = (a.left - base.left + 10) + 'px'; f.style.top = (a.top - base.top + a.height / 2 - 8) + 'px';
+    sortStage.append(f);
+    const dx = b.left - a.left - 10, dy = b.top - (a.top + a.height / 2 - 8);
+    f.animate([
+      { transform: 'translate(0,0) scale(.4)', opacity: 0 },
+      { transform: `translate(${dx * .5}px, ${dy * .5 - 40}px) scale(1.15)`, opacity: 1, offset: .5 },
+      { transform: `translate(${dx}px, ${dy}px) scale(1)`, opacity: 1 },
+    ], { duration: 700, easing: 'cubic-bezier(.45,.05,.3,1)' }).finished.then(() => {
+      if (!alive()) return; m.style.visibility = ''; f.remove();
+    });
+    await wait(170);
+  }
+  await wait(900); if (!alive()) return;
+  setStep(2); shelves.classList.add('packed');
+  pieces.forEach(({ p }) => p.classList.remove('lit'));
+}
+onView(sortStage, sortRun);
+stepsLi.forEach(li => { li.style.cursor = 'pointer'; li.addEventListener('click', sortRun); });
+
+/* ================= EXPLORER ================= */
+const TK = [
+  ['Data handling', 'data', [['dl', 'Data downloaders'], ['tide', 'Tide gauge decomposition'], ['mesh', 'Unstructured mesh generator']]],
+  ['Statistics & machine learning', 'stats', [['pca', 'PCA'], ['kmeans', 'KMeans'], ['kmed', 'KMedoids'], ['som', 'SOM'], ['mda', 'MDA'], ['lhs', 'LHS'], ['rbf', 'RBF'], ['gp', 'Gaussian processes'], ['ae', 'Autoencoders'], ['cop', 'Gaussian copulas'], ['alr', 'ALR'], ['ext', 'Non-stationary extremes'], ['dist', 'Distribution fit'], ['tail', 'Upper tail correction']]],
+  ['Numerical model wrappers', 'model', [['swan', 'SWAN'], ['swash', 'SWASH'], ['xbeach', 'XBeach'], ['sfincs', 'SFINCS'], ['delft', 'Delft3D'], ['snap', 'SnapWave'], ['schism', 'SCHISM'], ['riskscape', 'RiskScape']]],
+  ['Coastal domain tools', 'domain', [['sp', 'Super-Point'], ['part', 'Spectral partitioning'], ['corr', 'Spectral wave correction'], ['wes', 'Wave energy source']]],
+];
+const M = {
+  hyswash: { n: 'HySwash', ref: 'Ricondo et al., 2024', d: 'Hybrid model of wave transformation, setup and runup, trained on SWASH simulations.', tk: ['lhs', 'mda', 'pca', 'swash', 'rbf'] },
+  binwaves: { n: 'BinWaves', ref: 'Cagigal et al., 2024', d: 'Additive hybrid model that rebuilds nearshore wave spectra from pre-computed spectral bins.', tk: ['swan', 'sp', 'part'] },
+  shytc: { n: 'SHyTCWaves', ref: 'van Vloten et al., 2024', d: 'Hybrid model of the waves generated by tropical cyclones.', tk: ['mda', 'swan', 'rbf'] },
+  hybeat: { n: 'HyBeat', ref: 'Zornoza et al., 2024', d: 'Hybrid model of nearshore waves and runup, built on XBeach simulations.', tk: ['lhs', 'mda', 'pca', 'xbeach', 'rbf'] },
+  hyflood: { n: 'HyFlood', ref: 'Surrogate model', d: 'Surrogate model of compound coastal flooding, trained on SFINCS simulations.', tk: ['lhs', 'mda', 'pca', 'sfincs', 'gp'] },
+  muscle: { n: 'MUSCLE', ref: 'Climate emulator', d: 'MUltiScale CLimate Emulator: simulates thousands of years of plausible weather and waves.', tk: ['pca', 'kmeans', 'alr', 'cop', 'ext', 'dist'] },
+  greensurge: { n: 'GreenSurge', ref: 'Pérez-Díaz et al., 2024', d: 'High-resolution storm surge modelling on unstructured meshes.', tk: ['dl', 'mesh', 'delft'] },
+};
+const S = {
+  tc: { n: 'TC forecast system', ref: 'Climate service', d: 'Forecasts waves, runup and flooding for a tropical cyclone and its uncertainty cone.', m: ['shytc', 'binwaves', 'hybeat', 'hyflood'], tk: ['dl'] },
+  wave: { n: 'Wave hindcast & forecast', ref: 'Climate service', d: 'Brings global wave hindcasts and forecasts down to the coast.', m: ['binwaves', 'hybeat'], tk: ['dl', 'corr'] },
+  risk: { n: 'Probabilistic flood risk', ref: 'Climate service', d: 'Runs synthetic climates through flood models and turns them into impact metrics.', m: ['muscle', 'hyflood'], tk: ['riskscape'] },
+};
+const colTk = document.getElementById('col-tk');
+const chip = {};
+TK.forEach(([name, k, items]) => {
+  const g = el('div', 'group'); g.append(el('div', 'group-name', name));
+  const c = el('div', 'chips');
+  items.forEach(([id, n]) => { const b = el('div', 'brick chip k-' + k, n); chip[id] = b; c.append(b); });
+  g.append(c); colTk.append(g);
+});
+const pickEls = {};
+const mkPick = (box, id, o, k) => {
+  const b = el('button', 'brick pick k-' + k, `<b>${o.n}</b><small>${o.d.split(/[.:,]/)[0]}</small>`);
+  b.type = 'button'; b.addEventListener('click', () => { stopAuto(); select(id); });
+  pickEls[id] = b; box.append(b);
+};
+Object.entries(M).forEach(([id, o]) => mkPick(document.getElementById('picks-m'), id, o, 'method'));
+Object.entries(S).forEach(([id, o]) => mkPick(document.getElementById('picks-s'), id, o, 'service'));
+
+const explorer = document.getElementById('explorer');
+const wires = document.getElementById('wires');
+const readout = document.getElementById('readout');
+let current = 'hyswash';
+
+function link(a, b) {
+  const base = explorer.getBoundingClientRect(), r1 = a.getBoundingClientRect(), r2 = b.getBoundingClientRect();
+  let x1, y1, x2, y2, d;
+  if (r2.left >= r1.right - 4) {
+    x1 = r1.right - base.left; y1 = r1.top + r1.height / 2 - base.top;
+    x2 = r2.left - base.left; y2 = r2.top + r2.height / 2 - base.top;
+    const mx = (x1 + x2) / 2; d = `M${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
+  } else {
+    x1 = r1.left + r1.width / 2 - base.left; y1 = r1.bottom - base.top;
+    x2 = r2.left + r2.width / 2 - base.left; y2 = r2.top - base.top;
+    const my = (y1 + y2) / 2; d = `M${x1} ${y1} C ${x1} ${my}, ${x2} ${my}, ${x2} ${y2}`;
+  }
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', d); wires.append(p); return p;
+}
+function select(id, animate = true) {
+  current = id;
+  const isS = id in S, o = isS ? S[id] : M[id];
+  const mIds = isS ? o.m : [id];
+  const tkIds = new Set([...(isS ? o.tk : []), ...mIds.flatMap(m => M[m].tk)]);
+  Object.entries(chip).forEach(([k, c]) => { c.classList.toggle('on', tkIds.has(k)); c.classList.toggle('dim', !tkIds.has(k)); });
+  Object.entries(pickEls).forEach(([k, p]) => {
+    const on = k === id || mIds.includes(k);
+    p.classList.toggle('on', on); p.classList.toggle('dim', !on);
+    p.setAttribute('aria-pressed', k === id);
+  });
+  wires.innerHTML = '';
+  const paths = [];
+  mIds.forEach(m => M[m].tk.forEach(t => paths.push([0, link(chip[t], pickEls[m])])));
+  if (isS) {
+    o.tk.forEach(t => paths.push([1, link(chip[t], pickEls[id])]));
+    mIds.forEach(m => paths.push([1, link(pickEls[m], pickEls[id])]));
+  }
+  if (animate && !reduce) paths.forEach(([stage, p], i) => {
+    const len = p.getTotalLength(); p.style.strokeDasharray = len;
+    p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 650, delay: stage * 450 + (i % 6) * 40, easing: 'ease-out', fill: 'backwards' });
+  });
+  readout.innerHTML = `<h3>${o.n}</h3><div class="ref">${o.ref}</div><p>${o.d}</p>
+    <div class="count"><b>${tkIds.size}</b>toolkit pieces${isS ? `<br><b style="margin-top:8px">${mIds.length}</b>methods` : ''}</div>`;
+}
+select(current, false);
+addEventListener('resize', () => select(current, false));
+document.fonts && document.fonts.ready.then(() => select(current, false));
+
+const cycle = ['hyswash', 'binwaves', 'tc', 'muscle', 'hyflood', 'risk', 'shytc', 'wave', 'hybeat', 'greensurge'];
+let autoT = null, ci = 0, autoOn = !reduce;
+const autoNote = document.getElementById('auto-note');
+function stopAuto() { autoOn = false; clearInterval(autoT); autoNote.textContent = 'Pick any method or service.'; }
+if (autoOn) onView(explorer, () => {
+  if (!autoOn) return;
+  autoT = setInterval(() => { ci = (ci + 1) % cycle.length; select(cycle[ci]); }, 3600);
+}, 0.25);
+if (!autoOn) autoNote.textContent = 'Pick any method or service.';
+
+document.querySelectorAll('.brick:not(.open)').forEach(addStuds);
+addEventListener('load', () => select(current, false));
+
+/* ================= TC TOWER ================= */
+const tiers = [...document.querySelectorAll('#tower .tier')];
+const tracks = [...document.querySelectorAll('#tracks path')];
+function tcRun() {
+  if (reduce) return;
+  tracks.forEach((p, i) => { const len = p.getTotalLength(); p.style.strokeDasharray = len;
+    p.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 1400, delay: i * 180, easing: 'ease-out', fill: 'backwards' }); });
+  tiers.forEach((t, i) => {
+    const [b, , out] = t.children;
+    b.animate(LAND(160),
+      { duration: 700, delay: 400 + i * 520, easing: 'cubic-bezier(.35,.7,.4,1)', fill: 'backwards' });
+    [t.children[1], out].forEach(n => n.animate([{ opacity: 0, transform: 'translateX(-8px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 400, delay: 850 + i * 520, fill: 'backwards' }));
+  });
+}
+onView(document.getElementById('tower'), tcRun);
+document.getElementById('tc-replay').addEventListener('click', tcRun);
+})();
+</script>
+</body>
+</html>

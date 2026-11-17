@@ -1,0 +1,44 @@
+# Publish the slides (slides/) on GitHub Pages.
+# One-time setup: Settings → Pages → Source: "GitHub Actions".
+name: Slides
+
+on:
+  push:
+    branches: [main]
+    paths: ["slides/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the slides reference only existing files
+        run: |
+          cd slides
+          for f in $(grep -oE '(src|href)="[^"#:]+"' index.html | sed -E 's/.*="(.*)"/\1/'); do
+            [ -e "$f" ] || { echo "missing: slides/$f"; exit 1; }
+          done
+          ls data/*.json data/*.bin
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: slides
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

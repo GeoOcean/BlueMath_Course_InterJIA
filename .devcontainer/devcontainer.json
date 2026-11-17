@@ -17,7 +17,7 @@
         "codespaces": {
             "openFiles": [
                 "README.md",
-                "notebooks/01_SFINCS_metamodel.ipynb"
+                "notebooks/01_SFINCS_wrapper.ipynb"
             ]
         },
         "vscode": {
