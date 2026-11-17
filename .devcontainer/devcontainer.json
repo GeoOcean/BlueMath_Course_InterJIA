@@ -3,7 +3,13 @@
     // Prebuilt from .devcontainer/Dockerfile (see the header of that file).
     // To build it locally instead, replace "image" with:
     //   "build": { "dockerfile": "Dockerfile", "context": ".." }
-    "image": "geoocean/interjia:latest",
+    // "image": "geoocean/interjia:latest",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    // Clone BlueMath_tk into /workspaces and install it in editable mode
+    "postCreateCommand": "bash .devcontainer/install_develop.sh",
     "hostRequirements": {
         "cpus": 4
     },

@@ -1,11 +1,20 @@
 # Image of the InterJIA HySfincs course: SFINCS compiled from source + Python
 # environment (bluemath-tk, hydromt-sfincs, Jupyter).
 #
-# Users do not build this: devcontainer.json pulls the prebuilt image. To
-# rebuild and publish it (from the repository root):
+# Users do not build this: devcontainer.json pulls the prebuilt image. It is
+# published multi-arch (linux/amd64 + linux/arm64) so it runs natively on
+# Codespaces, Linux/Windows PCs and Apple Silicon Macs. To rebuild and publish
+# it (from the repository root, on an amd64 host):
 #
-#   docker build -f .devcontainer/Dockerfile -t geoocean/interjia:latest .
-#   docker push geoocean/interjia:latest
+#   # one-time setup: QEMU emulation for arm64 + a multi-platform builder
+#   docker run --privileged --rm tonistiigi/binfmt --install arm64
+#   docker buildx create --name multiarch --driver docker-container --use
+#
+#   docker buildx build --platform linux/amd64,linux/arm64 \
+#       -f .devcontainer/Dockerfile -t geoocean/interjia:latest --push .
+#
+# The arm64 half compiles SFINCS and solves the conda env under emulation:
+# expect it to be several times slower than the amd64 build.
 #
 # SFINCS (Deltares, GPL-3.0): https://github.com/Deltares/SFINCS
 
@@ -20,7 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates git build-essential gfortran autoconf automake libtool m4 \
-        libnetcdf-dev \
+        pkg-config libnetcdf-dev \
     && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --depth 1 --branch ${SFINCS_TAG} https://github.com/Deltares/SFINCS.git /usr/src/SFINCS
