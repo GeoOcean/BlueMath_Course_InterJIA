@@ -1,5 +1,4 @@
 # Publish the slides (slides/) on GitHub Pages.
-# One-time setup: Settings → Pages → Source: "GitHub Actions".
 name: Slides
 
 on:
