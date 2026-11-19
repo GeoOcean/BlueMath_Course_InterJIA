@@ -1110,7 +1110,7 @@
               <h1>Hundreds of years of weather</h1>
               <p class="lede">Ten years of data cannot tell us the 100-year flood. We simulate plausible days that keep
                 the physics of the weather.</p>
-              <div class="learn"><span>daily weather types</span><span>Gaussian copulas</span><span>validation</span>
+              <div class="learn"><span>weather types</span><span>ALR</span><span>Gaussian copulas</span><span>validation</span>
               </div>
             </div>
           </div>
@@ -1166,8 +1166,8 @@
           <div data-demo="dwt" class="fill"></div>
         </div>
         <aside class="notes">KMA clustering of the daily atmospheric fields over the North-East Atlantic, 1979–2018
-          (14,610 days). The KMA is regression guided by local rain and wind, so the types also separate what matters
-          at Santoña. Shown: the mean pressure anomaly of each type. Click one: its typical rain, surge and river
+          (14,610 days). The KMA clusters the 14 PCs together with the local rain and wind, so the types also separate
+          what matters at Santoña. Shown: the mean pressure anomaly of each type. Click one: its typical rain, surge and river
           discharge.</aside>
       </section>
 
@@ -1206,12 +1206,13 @@
               <p>An <b>autoregressive logistic regression</b> gives the probability of each AWT next year, knowing this
                 year's.</p>
               <pre class="mini-code">P(AWT<sub>t</sub> = i) ∝ exp(<span class="hl">α<sub>i</sub></span> + <span class="hl">β<sub>i</sub></span>·AWT<sub>t−1</sub>)</pre>
-              <p class="small">Terms: intercept + <b>Markov order 1</b>. Simulated: 3 × 100 years (2000–2100).</p>
+              <p class="small">Terms: intercept + <b>Markov order 1</b>. Simulated: 3 sequences, 1999–2100.</p>
               <p class="small">Only 6–10 years per AWT: a <b>Gaussian copula</b> with KDE marginals
                 <b>populates</b> the PC space of each AWT (1000 samples).</p>
               <p class="small muted">Each simulated year then picks its 3 PCs at random from the populated PCs of its
                 AWT.</p>
-              <div class="callout small"><code>ALR_WRP(...).Simulate(num_sims=3, ...)</code></div>
+              <div class="callout small"><code>ALR_WRP(...).Simulate(num_sims=3, ...)</code>: done for you, in
+                <code>data/AWT_SIM_nsims3_2000_2100.nc</code>.</div>
             </div>
           </div>
         </div>
@@ -1239,7 +1240,8 @@
                 years stormier; <b>Markov</b> keeps the persistence of the weather.</p>
               <p class="small muted">Covariates: the simulated PCs of the annual ALR, one value per year, repeated for
                 every day.</p>
-              <div class="callout small">Output: <code>xds_output.nc</code>, 3 × 100 years of DWTs.</div>
+              <div class="callout small">Output, given: <code>data/xds_output.nc</code>, 3 × 100 years of DWTs. Notebook 03
+                starts here.</div>
             </div>
           </div>
         </div>
@@ -1247,6 +1249,19 @@
           of the year (background = its AWT; constant through the year) and yesterday's DWT; the output is today's DWT.
           Fit: 1 intercept + 4 seasonal + 3 PCs + 24 Markov terms, for each of the 25 DWTs. 2 · DWT calendar,
           historical vs simulated. 3 · Monthly share of each DWT.</aside>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> Copulas</div>
+            <h2>A Gaussian copula: dependence and marginals, separately</h2>
+          </div>
+          <div data-demo="copula" class="fill"></div>
+        </div>
+        <aside class="notes">Three steps: correlated normals → uniforms with the normal CDF → any marginal with its
+          inverse CDF. The rank correlation survives every step. The same tool populates the AWT PCs (previous
+          slides) and, in notebook 03, samples rain, surge + setup and Q for each DWT.</aside>
       </section>
 
       <section>
@@ -1285,6 +1300,7 @@
                 <li>Fit one <b>Gaussian copula</b> per type and look at its correlations.</li>
                 <li>Simulate <b>3 × 100 years</b> from the simulated weather types.</li>
                 <li>Validate: histograms per type, scatter, QQ and annual maxima.</li>
+                <li>Plot one simulation with its <b>DWTs</b> and <b>AWTs</b> underneath.</li>
               </ol>
               <div class="callout small">💬 Try the <code>ECDF</code> kernel instead of <code>KDE</code> for a variable:
                 what happens to the extremes?</div>

@@ -55,8 +55,14 @@ Run them in order: each one uses what the previous one created.
 |:--|:--|
 | [`01_SFINCS_wrapper`](notebooks/01_SFINCS_wrapper.ipynb) | Pick 100 days (LHS + MDA), run SFINCS, compress the flood maps with PCA |
 | [`02_Surrogate`](notebooks/02_Surrogate.ipynb) | Fit the RBF surrogate, check its error, predict new days |
-| [`03_Emulator`](notebooks/03_Emulator.ipynb) | Simulate 3 × 100 years of rain, sea level and river flow |
+| [`03_Emulator`](notebooks/03_Emulator.ipynb) | Fit one Gaussian copula per weather type and simulate 3 × 100 years of rain, sea level and river flow |
 | [`04_Flood_climate`](notebooks/04_Flood_climate.ipynb) | Run the 110,000 emulated days through the surrogate: return periods and flood maps |
+
+The weather types are given in `notebooks/data/`: the 25 daily weather types
+(DWTs, `dwt_model.pkl`), and the 3 × 100 years of annual (AWTs) and daily
+weather types simulated with the two ALR models (`AWT_SIM_nsims3_2000_2100.nc`,
+`xds_output.nc`). The slides explain how they were built, but you do not run
+that part: notebook 03 starts from the simulated DWTs.
 
 Something failed, or you want to skip a step? Set `USE_PRETRAINED = True` at
 the top of notebooks 02 and 04, and they use our results in

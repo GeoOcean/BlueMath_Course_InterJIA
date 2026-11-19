@@ -4,7 +4,7 @@ import { plot, onResize } from '../lib/plot.js';
 import { C, plotlyDiverging, DWT_COLORS } from '../lib/colors.js';
 import { h, buttons } from '../lib/ui.js';
 
-// Same colours as the AWT figures of the emulator notebooks
+// Same AWT colours as the last figure of notebook 03
 const AWT_COLORS = ['#0072B2', '#E69F00', '#009E73', '#CC79A7', '#D55E00'];
 const BLUES = [[0, '#F7FBFF'], [0.25, '#C6DBEF'], [0.5, '#6BAED6'], [0.75, '#2171B5'], [1, '#08306B']];
 
