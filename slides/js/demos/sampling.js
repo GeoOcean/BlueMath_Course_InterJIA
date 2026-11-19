@@ -82,7 +82,7 @@ async function hullDemo(el) {
   if (ref) ref.textContent = `${s.nRaw.toLocaleString('en-US')} → ${s.nInside.toLocaleString('en-US')}`;
   const div = h('div', { class: 'plot' });
   let step = 1;
-  const steps = buttons([[1, '1 · LHS samples'], [2, '2 · + observed days'], [3, '3 · + convex hull'], [4, '4 · keep inside']], { value: 1, onPick: k => { step = +k; render(); } });
+  const steps = buttons([[1, '1 · observed days'], [2, '2 · + LHS samples'], [3, '3 · + convex hull'], [4, '4 · keep inside']], { value: 1, onPick: k => { step = +k; render(); } });
   el.append(h('div', { class: 'stack', style: { height: '100%' } }, steps, h('div', { class: 'grow' }, div)));
   const ins = s.inside, Q = s.lhs.Q, P = s.lhs.precip_acum;
   const pick = f => ({ x: Q.filter((_, i) => f(ins[i])), y: P.filter((_, i) => f(ins[i])) });
@@ -90,12 +90,12 @@ async function hullDemo(el) {
   function render() {
     const tr = [];
     const inn = pick(v => v === 1), out = pick(v => v === 0);
-    if (step < 4) tr.push({ ...pick(() => true), type: 'scattergl', mode: 'markers', marker: { size: 4, color: '#9FB3C8', opacity: 0.6 }, name: 'LHS', hoverinfo: 'skip' });
-    else {
+    if (step === 2 || step === 3) tr.push({ ...pick(() => true), type: 'scattergl', mode: 'markers', marker: { size: 4, color: '#9FB3C8', opacity: 0.6 }, name: 'LHS', hoverinfo: 'skip' });
+    else if (step >= 4) {
       tr.push({ ...out, type: 'scattergl', mode: 'markers', marker: { size: 4, color: '#D5DDE5', opacity: 0.5 }, name: 'discarded', hoverinfo: 'skip' });
       tr.push({ ...inn, type: 'scattergl', mode: 'markers', marker: { size: 4, color: C.accent, opacity: 0.7 }, name: 'kept', hoverinfo: 'skip' });
     }
-    if (step >= 2) tr.push({ x: hist.Q, y: hist.precip, type: 'scattergl', mode: 'markers', marker: { size: 5, color: C.hist, opacity: 0.55 }, name: 'observed days', hoverinfo: 'skip' });
+    tr.push({ x: hist.Q, y: hist.precip, type: 'scattergl', mode: 'markers', marker: { size: 5, color: C.hist, opacity: 0.55 }, name: 'observed days', hoverinfo: 'skip' });
     if (step >= 3) tr.push({ x: hx, y: hy, type: 'scatter', mode: 'lines', line: { color: C.navy, width: 2.5 }, fill: step === 3 ? 'toself' : 'none', fillcolor: 'rgba(47,109,181,0.08)', name: 'convex hull', hoverinfo: 'skip' });
     plot(div, tr, {
       xaxis: { title: 'River discharge Q [m³/s]', range: [0, 1200] }, yaxis: { title: 'Rain [mm/day]', range: [0, 125] },

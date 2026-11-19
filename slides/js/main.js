@@ -6,10 +6,11 @@ import sampling from './demos/sampling.js';
 import sfincs from './demos/sfincs.js';
 import surrogate from './demos/surrogate.js';
 import emulator from './demos/emulator.js';
+import awt from './demos/awt.js';
 import floodClimate from './demos/floodclimate.js';
 import wrappers from './demos/wrappers.js';
 
-const DEMOS = { ...ecosystem, ...caseStudy, ...sampling, ...sfincs, ...surrogate, ...emulator, ...floodClimate, ...wrappers };
+const DEMOS = { ...ecosystem, ...caseStudy, ...sampling, ...sfincs, ...surrogate, ...emulator, ...awt, ...floodClimate, ...wrappers };
 
 function start(el) {
   if (!el._demo) {

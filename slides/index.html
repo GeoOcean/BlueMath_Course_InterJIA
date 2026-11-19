@@ -1124,15 +1124,20 @@
             <h2>From weather patterns to daily drivers</h2>
           </div>
           <div class="stack" style="justify-content:center;gap:1.3em">
-            <div class="pipeline" style="grid-template-columns:repeat(4,1fr)">
-              <div class="step fragment fade-up"><span class="n">yearly</span>
-                <h3>Annual weather types</h3>
-                <p>The large-scale ocean-climate state of each year</p><span class="tk k-stats">AWT</span>
-              </div>
+            <div class="pipeline" style="grid-template-columns:repeat(5,1fr)">
               <div class="step fragment fade-up"><span class="n">daily · given</span>
                 <h3>Daily weather types</h3>
-                <p>25 patterns of sea level pressure around Iberia, simulated day by day</p><span class="tk k-stats">KMA
-                  · ALR</span>
+                <p>25 patterns of sea level pressure around Iberia, 1979–2018</p><span class="tk k-stats">PCA ·
+                  KMA</span>
+              </div>
+              <div class="step fragment fade-up"><span class="n">yearly · given</span>
+                <h3>Annual weather types</h3>
+                <p>5 types of year, from the share of each DWT in the year</p><span class="tk k-stats">PCA ·
+                  KMA</span>
+              </div>
+              <div class="step fragment fade-up"><span class="n">simulation · given</span>
+                <h3>Two ALR models</h3>
+                <p>AWT year by year, then DWT day by day with the AWT PCs as covariates</p><span class="tk k-stats">ALR</span>
               </div>
               <div class="step fragment fade-up"><span class="n">daily · notebook 03</span>
                 <h3>One copula per type</h3>
@@ -1144,7 +1149,7 @@
                 <p>110,673 plausible days, with the right dependence</p>
               </div>
             </div>
-            <div class="callout fragment">The DWT series (<code>data/xds_output.nc</code>) is given. In notebook 03 you
+            <div class="callout fragment">The simulated DWT series (<code>data/xds_output.nc</code>) is given. In notebook 03 you
               fit the copulas and simulate the drivers. The tide is added in notebook 04.</div>
           </div>
         </div>
@@ -1155,23 +1160,93 @@
           <div>
             <div class="eyebrow"><span class="nb">03</span> Predictor</div>
             <h2>25 daily weather types</h2>
+            <p class="small muted">Sea level pressure, its gradient and the 500 hPa geopotential, 1979–2018 →
+              <b>PCA</b> (90% of the variance) + <b>KMA</b> guided by local <b class="rain">rain</b> and wind.</p>
           </div>
           <div data-demo="dwt" class="fill"></div>
         </div>
-        <aside class="notes">KMA clustering of the daily atmospheric fields, 1979–2018. Shown: the mean pressure anomaly
-          of each type. Click one: its typical rain, surge and river discharge.</aside>
+        <aside class="notes">KMA clustering of the daily atmospheric fields over the North-East Atlantic, 1979–2018
+          (14,610 days). The KMA is regression guided by local rain and wind, so the types also separate what matters
+          at Santoña. Shown: the mean pressure anomaly of each type. Click one: its typical rain, surge and river
+          discharge.</aside>
       </section>
 
       <section>
         <div class="frame">
           <div>
-            <div class="eyebrow"><span class="nb">03</span> Copulas</div>
-            <h2>A Gaussian copula: dependence and marginals, separately</h2>
+            <div class="eyebrow"><span class="nb">03</span> Annual weather types</div>
+            <h2>From daily types to the character of a year</h2>
           </div>
-          <div data-demo="copula" class="fill"></div>
+          <div class="cols c-7-3">
+            <div data-demo="awt" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p>Count the DWTs of each year: <b>25 probabilities per year</b>, summing to 100%.</p>
+              <p class="small">Some years have more stormy types, others more anticyclonic ones. <b>PCA</b> (3 PCs) +
+                <b>KMA</b> groups the 40 years into <b>5 annual weather types</b>.</p>
+              <p class="small muted">Each AWT is a different mix of daily types: it sets which days are more likely
+                that year.</p>
+              <div class="callout small">The 3 PCs of each year are kept: they are the <b>covariates</b> of the daily
+                model.</div>
+            </div>
+          </div>
         </div>
-        <aside class="notes">Three steps: correlated normals → uniforms with the normal CDF → any marginal with its
-          inverse CDF. The rank correlation survives every step.</aside>
+        <aside class="notes">1 · Rows = years, columns = DWT, colour = share of the days. 2 · Years sorted by AWT, and
+          the PC1–PC2 plane where the KMA works. 3 · AWT centroid minus the average year: red = more frequent.</aside>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> ALR · annual</div>
+            <h2>Simulating the sequence of years</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="awt-alr" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p>An <b>autoregressive logistic regression</b> gives the probability of each AWT next year, knowing this
+                year's.</p>
+              <pre class="mini-code">P(AWT<sub>t</sub> = i) ∝ exp(<span class="hl">α<sub>i</sub></span> + <span class="hl">β<sub>i</sub></span>·AWT<sub>t−1</sub>)</pre>
+              <p class="small">Terms: intercept + <b>Markov order 1</b>. Simulated: 3 × 100 years (2000–2100).</p>
+              <p class="small">Only 6–10 years per AWT: a <b>Gaussian copula</b> with KDE marginals
+                <b>populates</b> the PC space of each AWT (1000 samples).</p>
+              <p class="small muted">Each simulated year then picks its 3 PCs at random from the populated PCs of its
+                AWT.</p>
+              <div class="callout small"><code>ALR_WRP(...).Simulate(num_sims=3, ...)</code></div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">1 · Historical vs simulated AWT sequences. 2 · Transition probabilities year to year: the
+          simulation reproduces the historical matrix. 3 · PC1–PC2 before (observed years) and after populating: CopulaSimulation(kernels=["KDE"] * 3,
+          num_sim=1000) per AWT gives new PC triplets with the same marginals and correlations as its observed years
+          (300 per AWT shown). These PCs drive the daily ALR.</aside>
+      </section>
+
+      <section>
+        <div class="frame">
+          <div>
+            <div class="eyebrow"><span class="nb">03</span> ALR · daily</div>
+            <h2>Simulating the weather day by day</h2>
+          </div>
+          <div class="cols c-7-3">
+            <div data-demo="dwt-alr" class="fill"></div>
+            <div class="stack" style="justify-content:center">
+              <p>A second ALR gives the probability of each of the 25 DWTs <b>tomorrow</b>.</p>
+              <pre class="mini-code"><span class="hl">intercept</span>
+<span class="hl">season</span>   cos/sin 2πt, 4πt
+<span class="hl">AWT</span>      PC1 PC2 PC3 of the year
+<span class="hl">Markov</span>   DWT of yesterday</pre>
+              <p class="small">The <b>seasonality</b> brings winter storms in winter; the <b>AWT PCs</b> make some
+                years stormier; <b>Markov</b> keeps the persistence of the weather.</p>
+              <p class="small muted">Covariates: the simulated PCs of the annual ALR, one value per year, repeated for
+                every day.</p>
+              <div class="callout small">Output: <code>xds_output.nc</code>, 3 × 100 years of DWTs.</div>
+            </div>
+          </div>
+        </div>
+        <aside class="notes">1 · What the ALR sees each day (1979–1983): the 4 seasonal harmonics, the 3 normalised PCs
+          of the year (background = its AWT; constant through the year) and yesterday's DWT; the output is today's DWT.
+          Fit: 1 intercept + 4 seasonal + 3 PCs + 24 Markov terms, for each of the 25 DWTs. 2 · DWT calendar,
+          historical vs simulated. 3 · Monthly share of each DWT.</aside>
       </section>
 
       <section>
